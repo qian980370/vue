@@ -197,24 +197,24 @@ const router = createRouter({
 })
 
 
-router.beforeEach((to, from, next) => {
-  if (to.path === '/login' || to.path === '/register') { //manager check
-    next()
-    return
-  }
-  if (to.path === '/facilitylogin' || to.path === '/facilitysignup') { //user check
-    next()
-    return
-  }
-  let user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
-  // let user = sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")) : {}
-  console.log(user);
-  if (!user) {
-    next('/login')
-  } else {
-    console.log("pass")
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   if (to.path === '/login' || to.path === '/register') { //manager check
+//     next()
+//     return
+//   }
+//   if (to.path === '/facilitylogin' || to.path === '/facilitysignup') { //user check
+//     next()
+//     return
+//   }
+//   let user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+//   // let user = sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")) : {}
+//   console.log(user);
+//   if (!user) {
+//     next('/login')
+//   } else {
+//     console.log("pass")
+//     next()
+//   }
+// })
 
 export default router
