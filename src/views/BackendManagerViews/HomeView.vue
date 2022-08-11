@@ -235,7 +235,7 @@ export default {
     // },
     load(){
       if(this.mode === 0){
-        request.get("user/page", {
+        request.get("http://ericbackend.azurewebsites.net/user/page", {
           params: {
             pageNum: this.currentPage,
             pageSize: this.pageSize,
@@ -248,7 +248,7 @@ export default {
           this.total = res.data.total;
         })
       }else if(this.mode === 1){
-        request.get("profile/page", {
+        request.get("http://ericbackend.azurewebsites.net/profile/page", {
           params: {
             pageNum: this.currentPage,
             pageSize: this.pageSize,
@@ -315,7 +315,7 @@ export default {
     onSubmit(){
       if (this.form.id){
         console.log("update");
-        request.put("/user", this.form).then(res =>{
+        request.put("http://ericbackend.azurewebsites.net/user", this.form).then(res =>{
           console.log(res);
           if (res.code === '200'){
             this.$message({
@@ -356,7 +356,7 @@ export default {
     },onProfileSubmit(){
       if (this.formProfile.id){
         console.log("update");
-        request.put("/profile", this.formProfile).then(res =>{
+        request.put("http://ericbackend.azurewebsites.net/profile", this.formProfile).then(res =>{
           console.log(res);
           if (res.code === '0'){
             this.$message({
@@ -375,7 +375,7 @@ export default {
         });
       }else{
         console.log("create");
-        request.post("/profile/create", this.formProfile).then(res =>{
+        request.post("http://ericbackend.azurewebsites.net/profile/create", this.formProfile).then(res =>{
           console.log(res);
           if (res.code === "200"){
             this.$message({
@@ -403,7 +403,7 @@ export default {
     },
     handleDelete(id){
       console.log(id)
-      request.delete("/user/" + id).then(res => {
+      request.delete("http://ericbackend.azurewebsites.net/user/" + id).then(res => {
         if (res.code === '0') {
           this.$message({
             type: "success",
@@ -435,7 +435,7 @@ export default {
       this.load();
     },
     testHobby(){
-      request.get("hobby/page", {
+      request.get("http://ericbackend.azurewebsites.net/hobby/page", {
         params: {
           pageNum: this.currentPage,
           pageSize: this.pageSize,
