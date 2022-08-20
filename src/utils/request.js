@@ -3,7 +3,7 @@ import router from "@/router";
 import ElementUI from "@element-plus/icons-vue/dist";
 
 const request = axios.create({
-    baseURL: "", //api在vue.config.js 里面
+    baseURL: "/api", //api在vue.config.js 里面
     timeout: 10000
 })
 
