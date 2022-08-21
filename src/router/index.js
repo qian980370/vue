@@ -37,9 +37,13 @@ import AddFriend from "@/views/AddFriend";
 const routes = [
   {
     path: '/',
+    redirect: "/personal",
+  },
+  {
+    path: '/control',
     name: 'Layout',
     component: Layout,
-    redirect: "/personal",
+    redirect: "/home",
     children: [
       {
         path: 'home',
