@@ -15,18 +15,24 @@
 
       <div class="add_friends_display_container">
 
+
         <div class="add_friends_display_content">
           <table>
             <tr>
-              <td  v-for="(friend,index) in randomFriendTableData" :key='index' @click="selectFriend(index,friend.id)" :class="index === selectedIndex?'selected':''" >
-                <img :src="friend.icon" >
-                <p>{{friend.username}}</p>
-<!--                <p>{{index}}</p>-->
+              <td>
+                <img src="@/image/person/Wilson.jpg" >
+                <p>Wilson</p>
+                <img src="@/image/person/Robin.jpg" >
+                <p>Robin</p>
+                <img src="@/image/person/Nora.jpg" >
+                <p>Nora</p>
+                <!--                <p>{{index}}</p>-->
               </td>
 
             </tr>
           </table>
         </div>
+
 
       </div>
 
@@ -46,7 +52,7 @@
       <div class="add_friends_search">
         <table>
           <tr>
-            <td><input type="input" placeholder="Name"/></td>
+            <td><input type="input" placeholder="Eva"/></td>
             <td><a href="javascript:"><button id="add_friends_search_button">Search</button></a></td>
           </tr>
         </table>
@@ -55,8 +61,8 @@
       <div class="add_friends_search_content">
         <table>
           <tr>
-            <td><img src="../image/flower1.jpg"></td>
-            <td><p>James</p></td>
+            <td><img src="@/image/person/Eva.jpg"></td>
+            <td><p>Eva</p></td>
           </tr>
         </table>
       </div>

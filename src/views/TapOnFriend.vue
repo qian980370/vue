@@ -16,7 +16,7 @@
 
     <div class="myprofile_container">
       <div class="myprofile_form">
-        <div class="myprofile_form_header" style="margin: 30px auto"><p>Hi {{ username }}!</p></div>
+        <div class="myprofile_form_header" style="margin: 30px auto"><p>Hi Nail!</p></div>
 
         <hr>
 
@@ -36,11 +36,47 @@
             </table>
           </div>
 
-          <div class="myprofile_display_content" v-for="item in friendTableData">
+          <div class="myprofile_display_content" >
             <table>
               <tr >
-                <td><img :src="item.url"></td>
-                <td><p>{{ item.username }}</p></td>
+                <td><img src="@/image/person/Daisy.jpg"></td>
+                <td><p>Daisy</p></td>
+              </tr>
+            </table>
+            <table>
+              <tr >
+                <td><img src="@/image/person/Carl.jpg"></td>
+                <td><p>Carl</p></td>
+              </tr>
+            </table>
+            <table>
+              <tr >
+                <td><img src="@/image/person/Eva.jpg"></td>
+                <td><p>Eva</p></td>
+              </tr>
+            </table>
+            <table>
+              <tr >
+                <td><img src="@/image/person/Kevin.jpg"></td>
+                <td><p>Kevin</p></td>
+              </tr>
+            </table>
+            <table>
+              <tr >
+                <td><img src="@/image/person/Leon.jpg"></td>
+                <td><p>Leon</p></td>
+              </tr>
+            </table>
+            <table>
+              <tr >
+                <td><img src="@/image/person/Roben.jpg"></td>
+                <td><p>Roben</p></td>
+              </tr>
+            </table>
+            <table>
+              <tr >
+                <td><img src="@/image/person/Wilson.jpg"></td>
+                <td><p>Wilson</p></td>
               </tr>
             </table>
           </div>

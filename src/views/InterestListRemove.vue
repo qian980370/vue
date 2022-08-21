@@ -18,42 +18,106 @@
 
       <hr>
 
-      <div class="interests_display_header"><p>Click to remove from list</p></div>
 
 
       <div class="interests_display_container">
         <!--------Table------>
 
+          <!--------Table------>
+          <div class="interests_display_content">
+            <table>
+              <tr>
+                <td>
+                  <img src="@/image/interests/basketball.jpg">
+                  <p>Basketball</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/boardgame.jpg">
+                  <p>Board Game</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/chess.jpg">
+                  <p>Chess</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--------Table------>
+          <div class="interests_display_content">
+            <table>
+              <tr>
+                <td>
+                  <img src="@/image/interests/mountaineering.jpg">
+                  <p>Mountaineering</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/reading.jpg">
+                  <p>Reading</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/skateboarding.jpg">
+                  <p>Skateboarding</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--------Table------>
+          <div class="interests_display_content">
+            <table>
+              <tr>
+                <td>
+                  <img src="@/image/interests/skiing.jpg">
+                  <p>Skiing</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/soccer.jpg">
+                  <p>Soccer</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/surfing.jpg">
+                  <p>Surfing</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--------Table------>
+          <div class="interests_display_content">
+            <table>
+              <tr>
+                <td>
+                  <img src="@/image/interests/videogame.jpg">
+                  <p>Video Game</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/Baseball.jpg">
+                  <p>Baseball</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/Music.jpg">
+                  <p>Music</p>
+                </td>
+              </tr>
+            </table>
+          </div>
 
-        <!--------Table------>
-        <div class="interests_display_content">
-          <table>
-            <tr v-for="(row,index) in sliceList(hobbyTableData,3)" >
-              <td v-for="(data,i) in row " :key="i">
-                <img :src="data.icon">
-                <p>{{data.name}}</p>
-              </td>
-            </tr>
-          </table>
         </div>
-
-
-
-      </div>
-
-
       <div class="interests_buttons">
         <table>
           <tr>
-            <td><a href="javescript:"><button id="remove_btn">Remove</button></a></td>
-            <td><a href="more_interests.html"><button id="more_btn">More</button></a></td>
+            <td><button id="remove_btn" @click="$router.push('/interestlist')">Remove</button></td>
+            <td><button id="more_btn" @click="$router.push('/moreinterest')">More</button></td>
           </tr>
         </table>
       </div>
 
+
+      </div>
+
+
+
+
     </div>
 
-  </div>
   </body>
 
 </template>

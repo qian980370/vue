@@ -26,35 +26,90 @@
 
       <div class="more_interests_display_container">
         <!--------Table------>
-        <div class="more_interests_display_content">
-          <table>
-            <tr>
-              <td>
-                <div class="more_interests_display_content_img">
-                  <button id="add_interest_btn"></button>
-                </div>
-                <p>Basketball</p>
-              </td>
+          <div class="interests_display_content">
+            <table>
+              <tr>
+                <td>
+                  <img src="@/image/interests/basketball.jpg">
+                  <p>Basketball</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/boardgame.jpg">
+                  <p>Board Game</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/chess.jpg">
+                  <p>Chess</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--------Table------>
+          <div class="interests_display_content">
+            <table>
+              <tr>
+                <td>
+                  <img src="@/image/interests/mountaineering.jpg">
+                  <p>Mountaineering</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/reading.jpg">
+                  <p>Reading</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/skateboarding.jpg">
+                  <p>Skateboarding</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--------Table------>
+          <div class="interests_display_content">
+            <table>
+              <tr>
+                <td>
+                  <img src="@/image/interests/skiing.jpg">
+                  <p>Skiing</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/soccer.jpg">
+                  <p>Soccer</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/surfing.jpg">
+                  <p>Surfing</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--------Table------>
+          <div class="interests_display_content">
+            <table>
+              <tr>
+                <td>
+                  <img src="@/image/interests/videogame.jpg">
+                  <p>Video Game</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/Baseball.jpg">
+                  <p>Baseball</p>
+                </td>
+                <td>
+                  <img src="@/image/interests/Music.jpg">
+                  <p>Music</p>
+                </td>
+              </tr>
+            </table>
+          </div>
 
-            </tr>
-          </table>
         </div>
 
 
-      </div>
+    </div>
 
-      <div class="more_interests_buttons">
-        <table>
-          <tr>
-            <td><a href="javascript:"><button id="more_interests_add_btn">Add</button></a></td>
-            <td><a href="javascript:"><button id="more_interests_refresh_btn">Refresh</button></a></td>
-          </tr>
-        </table>
-      </div>
 
     </div>
 
-  </div>
 
   </body>
 
@@ -136,7 +191,7 @@ export default {
 }
 
 
-.more_interests_display{
+.interests_display{
   height: 480px;
   width: 400px;
   margin-left: 70px;
@@ -146,7 +201,7 @@ export default {
   border-color: #864a98;
 }
 
-.more_interests_display_content{
+.interests_display_content{
   width: 400px;
   height: 140px;
   margin-top: 20px;
@@ -157,29 +212,29 @@ export default {
   width: 100px;
   height: 100px;
   cursor: pointer;
-  z-index: 0px;
+  z-index: 0;
+}
+.interests_display_content img{
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
 }
 
-.more_interests_display_content td{
+.interests_display_content td{
   width: 240px;
-  height: 150px;
-  border: solid 2px white;
+  height: 160px;
 }
-.more_interests_display_content td:hover{
-  width: 240px;
-  height: 150px;
-  border: solid 2px #bfa0c8;
-}
-.more_interests_display_content tr{
+.interests_display_content tr{
   padding-top: 40px;
 }
 
-.more_interests_display_content p{
+.interests_display_content p{
   font-size: 14px;
   color:#864a98;
   font-weight: bold;
   text-align: center;
 }
+
 .more_interests_buttons{
   margin-left: 50px;
 }
@@ -192,7 +247,6 @@ export default {
   position: absolute;
   height: 30px;
   width: auto;
-  z-index: 20px;
   left: 96px;
 }
 
@@ -253,7 +307,7 @@ export default {
   background-color: white;
   color: #bfa0c8;
   border: solid 2px #bfa0c8;
-  margin-top: 70px;
+  margin-top: 200px;
   font-size: 18px;
   border-radius: 5px;
 }

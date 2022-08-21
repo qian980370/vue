@@ -4,7 +4,7 @@
   <div id="logo_and_title">
     <table>
       <tr>
-        <td width="100px"><img  src="src/image/logo.png" alt="logo" width="80px"></td>
+        <td width="100px"><img  src="@/image/logo.png" alt="logo" width="80px"></td>
         <td><h1>Wisdom Connect</h1></td>
       </tr>
     </table>
@@ -25,7 +25,7 @@
         <div class="blockedlist_display_content">
           <table>
             <tr>
-              <td><img src="src/image/flower1.jpg"></td>
+              <td><img src="@/image/person/James.jpg"></td>
               <td><p>James</p></td>
             </tr>
           </table>
@@ -34,8 +34,8 @@
         <div class="blockedlist_display_content">
           <table>
             <tr>
-              <td><img src="src/image/flower1.jpg"></td>
-              <td><p>James</p></td>
+              <td><img src="@/image/person/Leon.jpg"></td>
+              <td><p>Leon</p></td>
             </tr>
           </table>
         </div>
@@ -44,8 +44,8 @@
         <div class="blockedlist_display_content">
           <table>
             <tr>
-              <td> <img src="src/image/flower1.jpg"></td>
-              <td><p>James</p></td>
+              <td> <img src="@/image/person/Kevin.jpg"></td>
+              <td><p>Kevin</p></td>
             </tr>
           </table>
         </div>
@@ -53,8 +53,8 @@
         <div class="blockedlist_display_content">
           <table>
             <tr>
-              <td> <img src="src/image/flower1.jpg"></td>
-              <td><p>James</p></td>
+              <td> <img src="@/image/person/Nora.jpg"></td>
+              <td><p>Nora</p></td>
             </tr>
           </table>
         </div>
