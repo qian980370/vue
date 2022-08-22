@@ -37,7 +37,7 @@ import AddFriend from "@/views/AddFriend";
 const routes = [
   {
     path: '/',
-    redirect: "/personal",
+    redirect: "/login",
   },
   {
     path: '/control',
