@@ -22,7 +22,7 @@
 
             <table>
               <tr>
-                <td><img src="@/image/person/Kathy.jpg"></td>
+                <td><img src="../image/person/Kathy.jpg"></td>
                 <td><p>Kathy</p></td>
               </tr>
             </table>
