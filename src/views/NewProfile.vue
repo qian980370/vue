@@ -10,7 +10,7 @@
         <el-form-item label="Upload Profile Icon">
           <el-upload
               class="avatar-uploader"
-              action="http://localhost:9090/file/upload"
+              :action="'http://' + serverIp + '/file/upload'"
               :show-file-list="false"
               :on-change="handleLicensePreview"
               :before-upload="beforeLicenseUpload"
@@ -73,6 +73,7 @@
 import request from "@/utils/request";
 import WisdomHeader from '../components/WisdomHeader.vue'
 import { Plus } from '@element-plus/icons-vue';
+import {serverIp} from "../../public/config";
 
 
 export default {
@@ -80,6 +81,7 @@ export default {
   components:{WisdomHeader,Plus},
   data(){
     return{
+      serverIp: serverIp,
       form:{},
       img : null,
       uploadHeaders:{},

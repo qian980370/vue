@@ -1,9 +1,10 @@
 import axios from 'axios'
+import {serverIp} from "../../public/config";
 import router from "@/router";
 import ElementUI from "@element-plus/icons-vue/dist";
 
 const request = axios.create({
-    baseURL: "/api", //api在vue.config.js 里面
+    baseURL: `http://${serverIp}`, //api在vue.config.js 里面 已弃用
     timeout: 10000
 })
 
