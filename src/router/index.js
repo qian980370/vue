@@ -106,11 +106,11 @@ const routes = [
     name: 'ManagerRegister',
     component: ManagerRegisterView
   },
-    {
-        path: '/',
-        name: 'First',
-        component: First,
-      },
+    // {
+    //     path: '/',
+    //     name: 'First',
+    //     component: First,
+    //   },
   {
     path: '/facilitylogin',
     name: 'FacilityLogin',
