@@ -195,7 +195,7 @@ const routes = [
 
 ]
 
-const router = createRouter({
+const router = new VueRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
