@@ -12,7 +12,14 @@
 
   <div class="blockedlist_container">
     <div class="blockedlist_form">
-      <div class="blockedlist_form_header"><p>Your Blocked List</p></div>
+      <div class="blockedlist_form_header">
+        <table class="blockedlist_form_header_table">
+          <tr>
+            <td><div class="back_button" @click="$router.push('/personal')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
+            <td><p>Your Blocked List</p></td>
+          </tr>
+        </table>
+      </div>
 
       <hr>
 

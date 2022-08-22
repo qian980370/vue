@@ -13,7 +13,11 @@
 
     <div class="me_container">
       <div class="me_form">
-        <div class="me_form_header"><p>Me</p></div>
+        <div class="me_form_header">
+          <p>Me</p>
+          <td><div class="back_button" @click="$router.push('/login')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
+
+        </div>
         <hr>
 
         <div class="me_display_container">
@@ -294,6 +298,10 @@ export default {
   margin-top: 70px;
   font-size: 18px;
   border-radius: 5px;
+}
+.back_button{
+  width: 80px;
+  cursor: pointer;
 }
 </style>
 

@@ -191,7 +191,7 @@ export default {
 .addprofiles_container{
   /* background: url('jack-finnigan-M9EctVUPrp4-unsplash.jpg') no-repeat center center fixed; */
 
-  height: 1300px;
+  height: 1000px;
 
 }
 
@@ -199,7 +199,7 @@ export default {
 
 .addprofiles_form{
   width: 540px;
-  height: 1160px;
+  height: 760px;
   /* border: 2px solid red; */
   margin:20px auto;
   border:solid 2px;
