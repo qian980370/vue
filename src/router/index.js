@@ -37,13 +37,13 @@ import AddFriend from "@/views/AddFriend";
 const routes = [
   {
     path: '/',
-    redirect: "/personal",
+    redirect: "/homeview",
   },
   {
     path: '/control',
     name: 'Layout',
     component: Layout,
-    redirect: "/home",
+    redirect: "/control/home",
     children: [
       {
         path: 'home',
@@ -106,11 +106,11 @@ const routes = [
     name: 'ManagerRegister',
     component: ManagerRegisterView
   },
-    {
-        path: '/',
-        name: 'First',
-        component: First,
-      },
+    // {
+    //     path: '/',
+    //     name: 'First',
+    //     component: First,
+    //   },
   {
     path: '/facilitylogin',
     name: 'FacilityLogin',

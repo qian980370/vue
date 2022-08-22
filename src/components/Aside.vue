@@ -36,7 +36,7 @@ export default {
   components: {Money, MapLocation, LocationFilled, Document, Setting},
   methods:{
     routeToUser(){
-      this.$router.push("/user-controller")
+      this.$router.push("/control/user-controller")
     },
     // routeToProfile(){
     //

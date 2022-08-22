@@ -69,7 +69,7 @@
           <el-form-item label="Upload Hobby Icon">
             <el-upload
                 class="avatar-uploader"
-                action="http://localhost:9090/file/upload"
+                :action="'http://' + serverIp + '/file/upload'"
                 :show-file-list="false"
                 :on-change="handleLicensePreview"
                 :before-upload="beforeLicenseUpload"
@@ -106,6 +106,7 @@
 import request from "@/utils/request";
 import router from "@/router";
 import { Plus } from '@element-plus/icons-vue';
+import {serverIp} from "../../../public/config";
 
 export default {
   name: 'HobbyControllerView',
@@ -114,6 +115,7 @@ export default {
   },
   data(){
     return{
+      serverIp: serverIp,
       form: {},
       dialogHobbyTitle:"Create new hobby",
       dialogHobbyVisible: false,

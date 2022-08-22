@@ -57,7 +57,7 @@ export default {
   methods:{
     login(){
       console.log("login");
-      request.post("http://ericbackend.azurewebsites.net/user/login", this.loginForm).then(res => {
+      request.post("/user/login", this.loginForm).then(res => {
         console.log(res);
         if (res.code === '200') {
           localStorage.setItem("user", JSON.stringify(res.data));
@@ -65,7 +65,7 @@ export default {
             type: "success",
             message: "Successfully login"
           })
-          this.$router.push("/home")
+          this.$router.push("/control/home")
         } else {
           this.$message({
             type: "error",

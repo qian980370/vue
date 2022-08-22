@@ -36,22 +36,22 @@ export default {
   components: {Money, MapLocation, LocationFilled, Document, Setting},
   methods:{
     routeToUser(){
-      this.$router.push("/user-controller")
+      this.$router.push("/control/user-controller")
     },
     routeToProfile(){
-      this.$router.push("/profile-controller")
+      this.$router.push("/control/profile-controller")
     },
     routeToHobby(){
-      this.$router.push("/hobby-controller")
+      this.$router.push("/control/hobby-controller")
     },
     routeToFile(){
-      this.$router.push("/file-controller")
+      this.$router.push("/control/file-controller")
     },
     routeToFastCode(){
-      this.$router.push("/fastcode-controller")
+      this.$router.push("/control/fastcode-controller")
     },
     routeToProfileDemo(){
-      this.$router.push("/profile-demo")
+      this.$router.push("/control/profile-demo")
     },
   }
 }
