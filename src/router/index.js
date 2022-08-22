@@ -37,7 +37,7 @@ import AddFriend from "@/views/AddFriend";
 const routes = [
   {
     path: '/',
-    redirect: "/homeview",
+    redirect: "/taponfriend",
   },
   {
     path: '/control',
@@ -132,11 +132,7 @@ const routes = [
     name: 'BlockedList',
     component: BlockedList
   },
-  {
-    path: '/homeview',
-    name: 'HomeView',
-    component: BlockedList
-  },
+
   {
     path: '/interestlist',
     name: 'InterestList',
