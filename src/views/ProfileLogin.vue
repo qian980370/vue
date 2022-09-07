@@ -12,35 +12,11 @@
 
         <div class="profiles_display_container">
           <!--------Table------>
-          <div class="profiles_display_content"  >
+          <div class="profiles_display_content" v-for="item in userinfo" @click=next(item)>
             <table >
               <tr>
-                <td><img  src="@/image/person/Richard.jpg"></td>
-                <td><p>Richard</p></td>
-              </tr>
-            </table>
-            <table >
-              <tr>
-                <td><img  src="@/image/person/David.jpg"></td>
-                <td><p>David</p></td>
-              </tr>
-            </table>
-            <table >
-              <tr>
-                <td><img  src="@/image/person/Andrew.jpg"></td>
-                <td><p>Andrew</p></td>
-              </tr>
-            </table>
-            <table >
-              <tr>
-                <td><img  src="@/image/person/James.jpg"></td>
-                <td><p>James</p></td>
-              </tr>
-            </table>
-            <table >
-              <tr>
-                <td><img  src="@/image/person/Robin.jpg"></td>
-                <td><p>Robin</p></td>
+                <td><img  :src="item.icon"></td>
+                <td><p>{{ item.username }}</p></td>
               </tr>
             </table>
           </div>
@@ -60,6 +36,7 @@
 
     </div>
   </div>
+
 
 </template>
 

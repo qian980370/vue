@@ -4,7 +4,6 @@
     <title>More Interests</title>
   </head>
 
-  <body>
 
   <div id="logo_and_title">
     <table>
@@ -22,102 +21,125 @@
       <hr>
 
       <div class="more_interests_display_header"><p>Click to add in your list</p></div>
-
-
-      <div class="more_interests_display_container">
-        <!--------Table------>
-          <div class="interests_display_content">
-            <table>
-              <tr>
-                <td>
-                  <img src="@/image/interests/basketball.jpg">
-                  <p>Basketball</p>
-                </td>
-                <td>
-                  <img src="@/image/interests/boardgame.jpg">
-                  <p>Board Game</p>
-                </td>
-                <td>
-                  <img src="@/image/interests/chess.jpg">
-                  <p>Chess</p>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <!--------Table------>
-          <div class="interests_display_content">
-            <table>
-              <tr>
-                <td>
-                  <img src="@/image/interests/mountaineering.jpg">
-                  <p>Mountaineering</p>
-                </td>
-                <td>
-                  <img src="@/image/interests/reading.jpg">
-                  <p>Reading</p>
-                </td>
-                <td>
-                  <img src="@/image/interests/skateboarding.jpg">
-                  <p>Skateboarding</p>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <!--------Table------>
-          <div class="interests_display_content">
-            <table>
-              <tr>
-                <td>
-                  <img src="@/image/interests/skiing.jpg">
-                  <p>Skiing</p>
-                </td>
-                <td>
-                  <img src="@/image/interests/soccer.jpg">
-                  <p>Soccer</p>
-                </td>
-                <td>
-                  <img src="@/image/interests/surfing.jpg">
-                  <p>Surfing</p>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <!--------Table------>
-          <div class="interests_display_content">
-            <table>
-              <tr>
-                <td>
-                  <img src="@/image/interests/videogame.jpg">
-                  <p>Video Game</p>
-                </td>
-                <td>
-                  <img src="@/image/interests/Baseball.jpg">
-                  <p>Baseball</p>
-                </td>
-                <td>
-                  <img src="@/image/interests/Music.jpg">
-                  <p>Music</p>
-                </td>
-              </tr>
-            </table>
-          </div>
-
+      <div class="interests_display_container">
+        <div class="interests_display_content">
+          <table>
+            <tr v-for="(row,index) in sliceList(randomHobbyTableData,3)" >
+              <td v-for="(data,i) in row " :key="i">
+                <div class="interests_display_content_img">
+                  <img :src="data.icon">
+                  <button id="delete_interest_btn" @click="addHobby(data.id)"></button>
+                </div>
+                <p>{{data.name}}</p>
+              </td>
+            </tr>
+          </table>
         </div>
 
 
+
+
+
     </div>
 
 
     </div>
+  </div>
 
-
-  </body>
 
 </template>
 
 <script>
+import request from "@/utils/request";
 export default {
-  name: "MoreInterest"
+  name: "MoreInterest",
+  data(){
+    return{
+      form: {},
+      query: '',
+      search: '',
+      randomHobbyTableData:[
+      ],
+      profile : localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
+    }
+  },
+  computed: {
+    sliceList() {
+      return function (data,count) {
+        if (data != undefined) {
+          let index = 0;
+          let arrTemp = [];
+          for (let i = 0; i < data.length; i++) {
+            index = parseInt(i / count);
+            if (arrTemp.length <= index) {
+              arrTemp.push([]);
+            }
+            arrTemp[index].push(data[i])
+          }
+          return arrTemp
+        }
+      }
+    }
+  },
+  created() {
+    this.load()
+    console.log(this.profile);
+  },
+  methods:{
+    refreshProfile(){
+      this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {}
+      // console.log(this.profile);
+      this.privacy = this.profile.privacy;
+    },
+    load(){
+      this.refreshProfile();
+      this.getAllHobbies();
+      this.getRandomHobbies();
+
+    },
+    getAllHobbies(){
+      request.get("/hobby/hobbyList", {
+        params: {
+          profileID: this.profile.id,
+        }
+      }).then(res =>{
+        console.log(res);
+        this.hobbyTableData = res.data;
+      })
+    },
+    getRandomHobbies(){
+      request.get("/hobby/randomHobbies", {
+        params: {
+          profileID: this.profile.id,
+        }
+      }).then(res =>{
+        console.log(res);
+        this.randomHobbyTableData = res.data;
+      })
+    },
+    addHobby(id){
+      let friendRequestForm;
+      friendRequestForm = {};
+
+      friendRequestForm.profileID = this.profile.id;
+      friendRequestForm.targetID = id;
+
+      request.post("/hobby/addHobby", friendRequestForm).then(res => {
+        if (res.code === '200') {
+          this.$message({
+            type: "success",
+            message: "successfully add hobby"
+          })
+          this.load()
+        } else {
+          this.$message({
+            type: "error",
+            message: res.msg
+          })
+        }
+      })
+    },
+  }
 }
 </script>
 

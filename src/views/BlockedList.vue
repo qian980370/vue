@@ -1,75 +1,51 @@
 <template>
-  <body>
+  <div style="width: 100%; height: 120vh;  overflow: hidden">
 
-  <div id="logo_and_title">
-    <table>
-      <tr>
-        <td width="100px"><img  src="@/image/logo.png" alt="logo" width="80px"></td>
-        <td><h1>Wisdom Connect</h1></td>
-      </tr>
-    </table>
-  </div>
+    <div class="logo_and_title">
+      <table>
+        <tr>
+          <td><img  src="../image/logo.png" alt="logo"></td>
+          <td><h1>Wisdom Connect</h1></td>
+        </tr>
+      </table>
+    </div>
 
-  <div class="blockedlist_container">
-    <div class="blockedlist_form">
-      <div class="blockedlist_form_header">
-        <table class="blockedlist_form_header_table">
-          <tr>
-            <td><div class="back_button" @click="$router.push('/personal')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
-            <td><p>Your Blocked List</p></td>
-          </tr>
-        </table>
-      </div>
-
-      <hr>
-
-      <div class="blockedlist_display_header"><p>These people will not show up in your call list</p></div>
-
-
-      <div class="blockedlist_display_container">
-        <!--------Table------>
-
-        <div class="blockedlist_display_content">
-          <table>
+    <div class="blockedlist_container">
+      <div class="blockedlist_form">
+        <div class="blockedlist_form_header">
+          <table class="=blockedlist_form_header_table">
             <tr>
-              <td><img src="@/image/person/James.jpg"></td>
-              <td><p>James</p></td>
+              <td><div class="back_button" @click="$router.push('/personal')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
+              <td><p>Your Blocked List</p></td>
             </tr>
           </table>
         </div>
 
-        <div class="blockedlist_display_content">
-          <table>
-            <tr>
-              <td><img src="@/image/person/Leon.jpg"></td>
-              <td><p>Leon</p></td>
-            </tr>
-          </table>
-        </div>
 
-        <!--------Table------>
-        <div class="blockedlist_display_content">
-          <table>
-            <tr>
-              <td> <img src="@/image/person/Kevin.jpg"></td>
-              <td><p>Kevin</p></td>
-            </tr>
-          </table>
-        </div>
-        <!--------Table------>
-        <div class="blockedlist_display_content">
-          <table>
-            <tr>
-              <td> <img src="@/image/person/Nora.jpg"></td>
-              <td><p>Nora</p></td>
-            </tr>
-          </table>
+        <hr>
+
+        <div class="blockedlist_display_header"><p>These people will not show up in your call list</p></div>
+
+
+        <div class="blockedlist_display_container">
+          <!--------Table------>
+
+          <div class="myprofile_display_content" v-for="item in blockTableData">
+            <table>
+              <tr >
+                <td><img :src="item.url"></td>
+                <td><p>{{ item.username }}</p></td>
+              </tr>
+            </table>
+          </div>
+
         </div>
       </div>
+
     </div>
 
   </div>
-  </body>
+
 </template>
 
 <script>

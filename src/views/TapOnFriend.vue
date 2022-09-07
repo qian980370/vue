@@ -16,7 +16,7 @@
 
     <div class="myprofile_container">
       <div class="myprofile_form">
-        <div class="myprofile_form_header" style="margin: 30px auto"><p>Hi Nail!</p></div>
+        <div class="myprofile_form_header" style="margin: 30px auto"><p>Hi {{ username }}!</p></div>
 
         <hr>
 
@@ -36,47 +36,15 @@
             </table>
           </div>
 
-          <div class="myprofile_display_content" >
+          <div class="myprofile_display_content" v-for="item in friendTableData">
             <table>
               <tr >
-                <td><img src="@/image/person/Daisy.jpg"></td>
-                <td><p>Daisy</p></td>
-              </tr>
-            </table>
-            <table>
-              <tr >
-                <td><img src="@/image/person/Carl.jpg"></td>
-                <td><p>Carl</p></td>
-              </tr>
-            </table>
-            <table>
-              <tr >
-                <td><img src="@/image/person/Eva.jpg"></td>
-                <td><p>Eva</p></td>
-              </tr>
-            </table>
-            <table>
-              <tr >
-                <td><img src="@/image/person/Kevin.jpg"></td>
-                <td><p>Kevin</p></td>
-              </tr>
-            </table>
-            <table>
-              <tr >
-                <td><img src="@/image/person/Leon.jpg"></td>
-                <td><p>Leon</p></td>
-              </tr>
-            </table>
-            <table>
-              <tr >
-                <td><img src="@/image/person/Roben.jpg"></td>
-                <td><p>Roben</p></td>
-              </tr>
-            </table>
-            <table>
-              <tr >
-                <td><img src="@/image/person/Wilson.jpg"></td>
-                <td><p>Wilson</p></td>
+                <td><img :src="item.url"></td>
+                <td><p>{{ item.username }}</p></td>
+                <td class="myprofile_display_content_status">
+                  <p>online</p>
+                  <p>available</p>
+                </td>
               </tr>
             </table>
           </div>
@@ -98,11 +66,38 @@
       </div>
 
     </div>
+    <el-dialog id="chatForm" v-model="dialogChatVisible1" :title=this.roomId width="30%" :before-close="chatClose">
+      <div style="width: 85%">
+
+        <el-form>
+          <el-form-item :label="this.state">
+
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="chatAccept" :disabled="this.disableAccept">Accept</el-button>
+            <el-button @click="chatClose">Refuse</el-button>
+          </el-form-item>
+        </el-form>
+
+      </div>
+    </el-dialog>
+
+    <el-dialog id="chatForm2" v-model="dialogChatVisible2" :title=this.roomId width="30%" :before-close="chatClose">
+      <div style="width: 85%">
+
+        <el-form>
+          <el-form-item :label="this.state">
+
+          </el-form-item>
+          <el-form-item>
+
+            <el-button @click="chatClose">Refuse</el-button>
+          </el-form-item>
+        </el-form>
+
+      </div>
+    </el-dialog>
   </div>
-
-
-
-
 </template>
 
 <script>
@@ -112,17 +107,166 @@ export default {
   name: "TapOnFriend",
   data() {
     return {
+      websocket: null,
+      webSocketURL: 'ws://ericbackend.azurewebsites.net/chat',
+      oncall: false,
+      roomId: null,
+      dialogChatVisible1: false,
+      dialogChatVisible2: false,
+      disableAccept : false,
+      state: 'no call',
+
       username: null,
       friendTableData: [],
       profile: localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
     }
   },
-  created() {
-    this.load();
-    this.username = this.profile.username;
+  watch:{
+    $route(to,from){
+      this.websocket.close()
+      if (this.oncall){
+        this.chatClose()
+      }
+    }
   },
-  methods: {
+  destroyed() {
+    this.websocket.close()
+    if (this.oncall){
+      console.log("des")
+      this.chatClose()
+    }
+  },
+  methods:{
+    searchUser(){
+      request.get("/profile/searchProfile", {
+        params: {
+          profileID: this.profile.id,
+          query: this.query
+        }
+      }).then(res =>{
+        // console.log(res);
+        this.randomFriendTableData = res.data;
+      })
+    },
+    initialWebSocket(){
+      this.webSocketURL = 'ws://ericbackend.azurewebsites.net/chat/' + this.user.token + '/' + this.profile.id
+      if(typeof WebSocket === 'undefined'){
+        return console.log('your browser is not support websocket')
+      }
+      console.log(this.webSocketURL)
+      this.websocket = new WebSocket(this.webSocketURL)
+      this.websocket.onmessage = this.websocketOnMessage
+      this.websocket.onopen = this.websocketOnOpen
+      this.websocket.onerror = this.websocketOnError
+      this.websocket.onclose = this.websocketClose
 
+    },
+    websocketOnOpen() {
+
+
+    },
+    chatAccept(){
+      this.disableAccept = true
+      let callForm = {};
+      callForm.sender = this.profile.id
+      callForm.receiver = this.roomId
+      this.state = 'calling';
+      callForm.message = "1"
+
+      this.websocketSend(JSON.stringify(callForm))
+    },
+    chatClose(){
+      let callForm = {};
+      callForm.sender = this.profile.id
+      callForm.receiver = this.roomId
+      callForm.message = "2"
+
+      this.websocketSend(JSON.stringify(callForm))
+      this.state = 'no call';
+      this.oncall = false;
+      this.roomId = null;
+      this.dialogChatVisible1 = false;
+      this.dialogChatVisible2 = false;
+    },
+    websocketOnError() {
+      // 连接建立失败重连
+      this.initialWebSocket()
+    },
+    websocketOnMessage(e) {
+      // 数据接收
+      let res = JSON.parse(e.data)
+      console.log('receive: ', res)
+      if (res.isSystem){ //friend online offline notifications
+        this.$message({
+          type: "success",
+          message: res.message + "; friend: " + res.fromName
+        })
+      }else {
+        if (res.isGetRoomID){ // room build
+          this.oncall = true;
+
+          this.roomId = res.message;
+
+
+          //get room information
+          request.get("/chatcontroller/room", {
+            params: {
+              roomID: this.roomId,
+            }
+          }).then(res2 =>{
+            if(res2.data.holderone === this.profile.id){ //current user is chat sender
+              this.dialogChatVisible2 = true
+            }else { //current user is chat receiver
+              this.dialogChatVisible1 = true
+            }
+            this.state = 'on call';
+          })
+        }else {
+          if(res.message == 1){
+            this.state = 'calling';
+          }else {
+            this.$message({
+              type: "error",
+              message: "your friend closed your call"
+            })
+
+            this.state = 'no call';
+            this.oncall = false;
+            this.roomId = null;
+            this.dialogChatVisible1 = false;
+            this.dialogChatVisible2 = false;
+          }
+        }
+      }
+      this.getAllFriends()
+    },
+    websocketSend(Data) {
+
+      this.websocket.send(Data)
+    },
+    websocketClose(e) {
+
+      console.log('close connection', e)
+    },
+
+    callFriend(id){
+      //console.log(id)
+
+      let callForm = {};
+      callForm.sender = this.profile.id
+      callForm.receiver = id
+      callForm.message = "need url"
+
+      this.websocketSend(JSON.stringify(callForm))
+
+
+    },
+
+    created() {
+      this.load();
+      this.username = this.profile.username;
+      this.initialWebSocket()
+    },
     refreshProfile() {
       this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {}
       // console.log(this.profile);
@@ -148,6 +292,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 .content{

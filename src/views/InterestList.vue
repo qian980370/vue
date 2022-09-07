@@ -1,18 +1,17 @@
 <template>
+  <div style="width: 100%; height: 120vh;  overflow: hidden">
+
+    <div class="logo_and_title">
+      <table>
+        <tr>
+          <td><img  src="../image/logo.png" alt="logo"></td>
+          <td><h1>Wisdom Connect</h1></td>
+        </tr>
+      </table>
+    </div>
 
 
-  <body>
-  <div class="logo_and_title">
-    <table>
-      <tr>
-        <td><img  src="../image/logo.png" alt="logo"></td>
-        <td><h1>Wisdom Connect</h1></td>
-      </tr>
-    </table>
-  </div>
-
-
-  <div class="interests_container">
+   <div class="interests_container">
     <div class="interests_form">
       <div class="interests_form_header" >
         <table class="=interests_form_header_table">
@@ -28,86 +27,28 @@
 
 
       <div class="interests_display_container">
+        <div class="interests_display_content">
+          <table>
+            <tr v-for="(row,index) in sliceList(hobbyTableData,3)" >
+              <td v-for="(data,i) in row " :key="i">
+                <div class="interests_display_content_img">
+                  <img :src="data.icon">
+                  <button id="delete_interest_btn" @click="deleteHobby(data.id)"></button>
+                </div>
+                <p>{{data.name}}</p>
+              </td>
+            </tr>
+          </table>
+        </div>
         <!--------Table------>
 
+
+
         <!--------Table------>
-        <div class="interests_display_content">
-          <table>
-            <tr>
-              <td>
-                <img src="@/image/interests/basketball.jpg">
-                <p>Basketball</p>
-              </td>
-              <td>
-                <img src="@/image/interests/boardgame.jpg">
-                <p>Board Game</p>
-              </td>
-              <td>
-                <img src="@/image/interests/chess.jpg">
-                <p>Chess</p>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <!--------Table------>
-        <div class="interests_display_content">
-          <table>
-            <tr>
-              <td>
-                <img src="@/image/interests/mountaineering.jpg">
-                <p>Mountaineering</p>
-              </td>
-              <td>
-                <img src="@/image/interests/reading.jpg">
-                <p>Reading</p>
-              </td>
-              <td>
-                <img src="@/image/interests/skateboarding.jpg">
-                <p>Skateboarding</p>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <!--------Table------>
-        <div class="interests_display_content">
-          <table>
-            <tr>
-              <td>
-                <img src="@/image/interests/skiing.jpg">
-                <p>Skiing</p>
-              </td>
-              <td>
-                <img src="@/image/interests/soccer.jpg">
-                <p>Soccer</p>
-              </td>
-              <td>
-                <img src="@/image/interests/surfing.jpg">
-                <p>Surfing</p>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <!--------Table------>
-        <div class="interests_display_content">
-          <table>
-            <tr>
-              <td>
-                <img src="@/image/interests/videogame.jpg">
-                <p>Video Game</p>
-              </td>
-              <td>
-                <img src="@/image/interests/Baseball.jpg">
-                <p>Baseball</p>
-              </td>
-              <td>
-                <img src="@/image/interests/Music.jpg">
-                <p>Music</p>
-              </td>
-            </tr>
-          </table>
-        </div>
+
 
       </div>
+
       <div class="interests_buttons">
         <table>
           <tr>
@@ -117,15 +58,12 @@
         </table>
       </div>
 
-
     </div>
 
-
-
+   </div>
 
   </div>
 
-  </body>
 
 </template>
 

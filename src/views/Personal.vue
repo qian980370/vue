@@ -26,8 +26,8 @@
 
             <table>
               <tr>
-                <td><img src="../image/person/Kathy.jpg"></td>
-                <td><p>Kathy</p></td>
+                <td><img :src="profile.icon"></td>
+                <td><p>{{profile.username}}</p></td>
               </tr>
             </table>
 

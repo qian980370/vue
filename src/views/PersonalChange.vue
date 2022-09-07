@@ -16,13 +16,13 @@
               :on-success="handleAvatarSuccess"
 
           >
-            <img src="@/image/person/Kathy.jpg" class="temp" />
-<!--            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>-->
+            <img v-if="profile.icon != null" :src="profile.icon" class="avatar" />
+            <!--            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>-->
           </el-upload>
         </el-form-item>
 
         <el-form-item label="Profile Name">
-          <el-input placeholder="Kathy" />
+          <el-input v-model="profile.username" />
         </el-form-item>
         <el-form-item label="Privacy">
           <el-radio-group v-model="profile.privacy">
@@ -33,7 +33,7 @@
         </el-form-item>
 
         <el-form-item label="Age">
-          <el-input placeholder="70" />
+          <el-input v-model="profile.age" />
         </el-form-item>
 
         <el-form-item label="Gender">
