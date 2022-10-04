@@ -36,15 +36,19 @@
             </table>
           </div>
 
-          <div class="myprofile_display_content" v-for="item in friendTableData">
+          <div class="myprofile_display_content" v-for="item in friendTableData" @click="clickFriend(item)">
             <table>
               <tr >
-                <td><img :src="item.url"></td>
+                <td><img :src="item.icon"></td>
                 <td><p>{{ item.username }}</p></td>
                 <td class="myprofile_display_content_status">
-                  <p>online</p>
-                  <p>available</p>
+                  <p v-if="item.online ===1" >online</p>
+                  <p v-else >offline</p>
+                  <p v-if="item.oncall ===1" >available</p>
+                  <p v-else >unavailable</p>
+
                 </td>
+
               </tr>
             </table>
           </div>
@@ -56,7 +60,7 @@
         <div class="myprofile_switch">
           <table>
             <tr>
-              <td><button id="videocall_btn">Make a Video Call</button></td>
+              <td><button id="videocall_btn" @click="callFriend(selectedFriendId)">Make a Video Call</button></td>
               <td><button id="me_btn" @click="this.$router.push('/personal')">Me</button></td>
             </tr>
           </table>
@@ -119,7 +123,14 @@ export default {
       username: null,
       friendTableData: [],
       profile: localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
+      selectedFriendId:null
     }
+  },
+  created() {
+    console.log("build");
+    this.load();
+    this.username = this.profile.username;
+   // this.initialWebSocket();
   },
   watch:{
     $route(to,from){
@@ -137,6 +148,10 @@ export default {
     }
   },
   methods:{
+    clickFriend(item){
+      this.selectedFriendId = item.id;
+      console.log(this.selectedFriendId);
+    },
     searchUser(){
       request.get("/profile/searchProfile", {
         params: {
@@ -263,13 +278,14 @@ export default {
     },
 
     created() {
+      console.log("build");
       this.load();
       this.username = this.profile.username;
       this.initialWebSocket()
     },
     refreshProfile() {
       this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {}
-      // console.log(this.profile);
+      console.log(this.profile);
       this.privacy = this.profile.privacy;
     },
     load(){
