@@ -1,14 +1,13 @@
 <template>
-<!--  <div class="header">-->
-<!--    <h2>wisdom connect</h2>-->
-<!--  </div>-->
+  <!--  <div class="header">-->
+  <!--    <h2>wisdom connect</h2>-->
+  <!--  </div>-->
 
-  <div class="content" >
-
+  <div class="content">
     <div class="logo_and_title">
       <table>
         <tr>
-          <td><img  src="../image/logo.png" alt="logo"></td>
+          <td><img src="../image/logo.png" alt="logo" /></td>
           <td><h1>Wisdom Connect</h1></td>
         </tr>
       </table>
@@ -16,9 +15,11 @@
 
     <div class="myprofile_container">
       <div class="myprofile_form">
-        <div class="myprofile_form_header" style="margin: 30px auto"><p>Hi {{ username }}!</p></div>
+        <div class="myprofile_form_header" style="margin: 30px auto">
+          <p>Hi {{ username }}!</p>
+        </div>
 
-        <hr>
+        <hr />
 
         <div class="myprofile_addfriend">
           <!-- <input type="input" placeholder="add a friend"/></td> -->
@@ -27,78 +28,94 @@
 
         <div class="myprofile_display_container">
           <!--------Table------>
-          <div class="myprofile_talk_to_sb_new" >
+          <div class="myprofile_talk_to_sb_new">
             <table>
               <tr>
-                <td><img src="../image/flower1.png"></td>
+                <td><img src="../image/flower1.png" /></td>
                 <td><p>Talk to someone new</p></td>
               </tr>
             </table>
           </div>
 
-          <div class="myprofile_display_content" v-for="item in friendTableData" @click="clickFriend(item)">
+          <div
+            class="myprofile_display_content"
+            v-for="item in friendTableData"
+            :key="item.id"
+            @click="clickFriend(item)"
+          >
             <table>
-              <tr >
-                <td><img :src="item.icon"></td>
-                <td><p>{{ item.username }}</p></td>
-                <td class="myprofile_display_content_status">
-                  <p v-if="item.online ===1" >online</p>
-                  <p v-else >offline</p>
-                  <p v-if="item.oncall ===1" >available</p>
-                  <p v-else >unavailable</p>
-
+              <tr>
+                <td><img :src="item.icon" /></td>
+                <td>
+                  <p>{{ item.username }}</p>
                 </td>
-
+                <td class="myprofile_display_content_status">
+                  <p v-if="item.online === 1">online</p>
+                  <p v-else>offline</p>
+                  <p v-if="item.oncall === 1">available</p>
+                  <p v-else>unavailable</p>
+                </td>
               </tr>
             </table>
           </div>
-
-
-
         </div>
 
         <div class="myprofile_switch">
           <table>
             <tr>
-              <td><button id="videocall_btn" @click="callFriend(selectedFriendId)">Make a Video Call</button></td>
-              <td><button id="me_btn" @click="this.$router.push('/personal')">Me</button></td>
+              <td>
+                <button
+                  id="videocall_btn"
+                  @click="callFriend(selectedFriendId)"
+                >
+                  Make a Video Call
+                </button>
+              </td>
+              <td>
+                <button id="me_btn" @click="routeTo('/personal')">Me</button>
+              </td>
             </tr>
           </table>
         </div>
-
-
       </div>
-
     </div>
-    <el-dialog id="chatForm" v-model="dialogChatVisible1" :title=this.roomId width="30%" :before-close="chatClose">
+    <el-dialog
+      id="chatForm"
+      v-model="dialogChatVisible1"
+      :title="this.roomId"
+      width="30%"
+      :before-close="chatClose"
+    >
       <div style="width: 85%">
-
         <el-form>
-          <el-form-item :label="this.state">
-
-          </el-form-item>
+          <el-form-item :label="this.state"> </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="chatAccept" :disabled="this.disableAccept">Accept</el-button>
+            <el-button
+              type="primary"
+              @click="chatAccept"
+              :disabled="this.disableAccept"
+              >Accept</el-button
+            >
             <el-button @click="chatClose">Refuse</el-button>
           </el-form-item>
         </el-form>
-
       </div>
     </el-dialog>
 
-    <el-dialog id="chatForm2" v-model="dialogChatVisible2" :title=this.roomId width="30%" :before-close="chatClose">
+    <el-dialog
+      id="chatForm2"
+      v-model="dialogChatVisible2"
+      :title="this.roomId"
+      width="30%"
+      :before-close="chatClose"
+    >
       <div style="width: 85%">
-
         <el-form>
-          <el-form-item :label="this.state">
-
-          </el-form-item>
+          <el-form-item :label="this.state"> </el-form-item>
           <el-form-item>
-
             <el-button @click="chatClose">Refuse</el-button>
           </el-form-item>
         </el-form>
-
       </div>
     </el-dialog>
   </div>
@@ -112,92 +129,99 @@ export default {
   data() {
     return {
       websocket: null,
-      webSocketURL: 'ws://ericbackend.azurewebsites.net/chat',
+      webSocketURL: "ws://ericbackend.azurewebsites.net/chat",
       oncall: false,
       roomId: null,
       dialogChatVisible1: false,
       dialogChatVisible2: false,
-      disableAccept : false,
-      state: 'no call',
+      disableAccept: false,
+      state: "no call",
 
       username: null,
       friendTableData: [],
-      profile: localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
-      selectedFriendId:null
-    }
+      profile: localStorage.getItem("profile")
+        ? JSON.parse(localStorage.getItem("profile"))
+        : null,
+      selectedFriendId: null,
+    };
   },
   created() {
     console.log("build");
     this.load();
     this.username = this.profile.username;
-   // this.initialWebSocket();
+    // this.initialWebSocket();
   },
-  watch:{
-    $route(to,from){
-      this.websocket.close()
-      if (this.oncall){
-        this.chatClose()
-      }
-    }
+  watch: {
+    // $route(to, from) {
+    //   this.websocket.close();
+    //   if (this.oncall) {
+    //     this.chatClose();
+    //   }
+    // },
   },
   destroyed() {
-    this.websocket.close()
-    if (this.oncall){
-      console.log("des")
-      this.chatClose()
+    this.websocket.close();
+    if (this.oncall) {
+      console.log("des");
+      this.chatClose();
     }
   },
-  methods:{
-    clickFriend(item){
+  methods: {
+    routeTo(link) {
+      this.$router.push("/personal");
+    },
+    clickFriend(item) {
       this.selectedFriendId = item.id;
       console.log(this.selectedFriendId);
     },
-    searchUser(){
-      request.get("/profile/searchProfile", {
-        params: {
-          profileID: this.profile.id,
-          query: this.query
-        }
-      }).then(res =>{
-        // console.log(res);
-        this.randomFriendTableData = res.data;
-      })
+    searchUser() {
+      request
+        .get("/profile/searchProfile", {
+          params: {
+            profileID: this.profile.id,
+            query: this.query,
+          },
+        })
+        .then((res) => {
+          // console.log(res);
+          this.randomFriendTableData = res.data;
+        });
     },
-    initialWebSocket(){
-      this.webSocketURL = 'ws://ericbackend.azurewebsites.net/chat/' + this.user.token + '/' + this.profile.id
-      if(typeof WebSocket === 'undefined'){
-        return console.log('your browser is not support websocket')
+    initialWebSocket() {
+      this.webSocketURL =
+        "ws://ericbackend.azurewebsites.net/chat/" +
+        this.user.token +
+        "/" +
+        this.profile.id;
+      if (typeof WebSocket === "undefined") {
+        return console.log("your browser is not support websocket");
       }
-      console.log(this.webSocketURL)
-      this.websocket = new WebSocket(this.webSocketURL)
-      this.websocket.onmessage = this.websocketOnMessage
-      this.websocket.onopen = this.websocketOnOpen
-      this.websocket.onerror = this.websocketOnError
-      this.websocket.onclose = this.websocketClose
-
+      console.log(this.webSocketURL);
+      this.websocket = new WebSocket(this.webSocketURL);
+      this.websocket.onmessage = this.websocketOnMessage;
+      this.websocket.onopen = this.websocketOnOpen;
+      this.websocket.onerror = this.websocketOnError;
+      this.websocket.onclose = this.websocketClose;
     },
-    websocketOnOpen() {
-
-
-    },
-    chatAccept(){
-      this.disableAccept = true
+    websocketOnOpen() {},
+    chatAccept() {
+      this.disableAccept = true;
       let callForm = {};
-      callForm.sender = this.profile.id
-      callForm.receiver = this.roomId
-      this.state = 'calling';
-      callForm.message = "1"
+      callForm.sender = this.profile.id;
+      callForm.receiver = this.roomId;
+      this.state = "calling";
+      callForm.message = "1";
 
-      this.websocketSend(JSON.stringify(callForm))
+      this.websocketSend(JSON.stringify(callForm));
     },
-    chatClose(){
+    chatClose() {
       let callForm = {};
-      callForm.sender = this.profile.id
-      callForm.receiver = this.roomId
-      callForm.message = "2"
+      callForm.sender = this.profile.id;
+      callForm.receiver = this.roomId;
+      callForm.message = "2";
 
-      this.websocketSend(JSON.stringify(callForm))
-      this.state = 'no call';
+      this.websocketSend(JSON.stringify(callForm));
+      this.state = "no call";
       this.oncall = false;
       this.roomId = null;
       this.dialogChatVisible1 = false;
@@ -205,47 +229,52 @@ export default {
     },
     websocketOnError() {
       // 连接建立失败重连
-      this.initialWebSocket()
+      this.initialWebSocket();
     },
     websocketOnMessage(e) {
       // 数据接收
-      let res = JSON.parse(e.data)
-      console.log('receive: ', res)
-      if (res.isSystem){ //friend online offline notifications
+      let res = JSON.parse(e.data);
+      console.log("receive: ", res);
+      if (res.isSystem) {
+        //friend online offline notifications
         this.$message({
           type: "success",
-          message: res.message + "; friend: " + res.fromName
-        })
-      }else {
-        if (res.isGetRoomID){ // room build
+          message: res.message + "; friend: " + res.fromName,
+        });
+      } else {
+        if (res.isGetRoomID) {
+          // room build
           this.oncall = true;
 
           this.roomId = res.message;
 
-
           //get room information
-          request.get("/chatcontroller/room", {
-            params: {
-              roomID: this.roomId,
-            }
-          }).then(res2 =>{
-            if(res2.data.holderone === this.profile.id){ //current user is chat sender
-              this.dialogChatVisible2 = true
-            }else { //current user is chat receiver
-              this.dialogChatVisible1 = true
-            }
-            this.state = 'on call';
-          })
-        }else {
-          if(res.message == 1){
-            this.state = 'calling';
-          }else {
+          request
+            .get("/chatcontroller/room", {
+              params: {
+                roomID: this.roomId,
+              },
+            })
+            .then((res2) => {
+              if (res2.data.holderone === this.profile.id) {
+                //current user is chat sender
+                this.dialogChatVisible2 = true;
+              } else {
+                //current user is chat receiver
+                this.dialogChatVisible1 = true;
+              }
+              this.state = "on call";
+            });
+        } else {
+          if (res.message == 1) {
+            this.state = "calling";
+          } else {
             this.$message({
               type: "error",
-              message: "your friend closed your call"
-            })
+              message: "your friend closed your call",
+            });
 
-            this.state = 'no call';
+            this.state = "no call";
             this.oncall = false;
             this.roomId = null;
             this.dialogChatVisible1 = false;
@@ -253,71 +282,70 @@ export default {
           }
         }
       }
-      this.getAllFriends()
+      this.getAllFriends();
     },
     websocketSend(Data) {
-
-      this.websocket.send(Data)
+      this.websocket.send(Data);
     },
     websocketClose(e) {
-
-      console.log('close connection', e)
+      console.log("close connection", e);
     },
 
-    callFriend(id){
+    callFriend(id) {
       //console.log(id)
 
       let callForm = {};
-      callForm.sender = this.profile.id
-      callForm.receiver = id
-      callForm.message = "need url"
+      callForm.sender = this.profile.id;
+      callForm.receiver = id;
+      callForm.message = "need url";
 
-      this.websocketSend(JSON.stringify(callForm))
-
-
+      this.websocketSend(JSON.stringify(callForm));
     },
 
     created() {
       console.log("build");
       this.load();
       this.username = this.profile.username;
-      this.initialWebSocket()
+      this.initialWebSocket();
     },
     refreshProfile() {
-      this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {}
+      this.profile = localStorage.getItem("profile")
+        ? JSON.parse(localStorage.getItem("profile"))
+        : {};
       console.log(this.profile);
       this.privacy = this.profile.privacy;
     },
-    load(){
+    load() {
       this.refreshProfile();
       this.getAllFriends();
     },
-    next(){
-      this.$router.push('/addfriend')
+    next() {
+      this.$router.push("/addfriend");
     },
-    getAllFriends(){
-      request.get("/profile/friendList", {
-        params: {
-          profileID: this.profile.id,
-        }
-      }).then(res =>{
-        console.log(res);
-        this.friendTableData = res.data;
-      })
+    getAllFriends() {
+      request
+        .get("/profile/friendList", {
+          params: {
+            profileID: this.profile.id,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          this.friendTableData = res.data;
+        });
     },
-  }
-}
+  },
+};
 </script>
 
-
 <style scoped>
-.content{
+.content {
   width: 100%;
   height: 120vh;
   overflow: hidden;
-  position:relative;
+  position: relative;
 }
-.logo_and_title{
+.logo_and_title {
   width: 400px;
   height: 120px;
   text-align: center;
@@ -327,14 +355,14 @@ export default {
   /*padding-left: 600px;*/
   /*padding-top: 60px;*/
 }
-.logo_and_title img{
+.logo_and_title img {
   width: 80px;
 }
-.logo_and_title h1{
+.logo_and_title h1 {
   width: 300px;
 }
 /*------------My Profile---------------*/
-.myprofile_container{
+.myprofile_container {
   /* background: url('jack-finnigan-M9EctVUPrp4-unsplash.jpg') no-repeat center center fixed; */
 
   height: 1000px;
@@ -346,26 +374,26 @@ export default {
   /* background-color: azure; */
 }
 
-.myprofile_form{
+.myprofile_form {
   width: 540px;
   height: 800px;
   /* border: 2px solid red; */
-  margin:20px auto;
+  margin: 20px auto;
   text-align: center;
-  border:solid 2px;
-  border-color:#864a98;
+  border: solid 2px;
+  border-color: #864a98;
   border-radius: 5px;
 }
-.myprofile_form_header p{
+.myprofile_form_header p {
   font-size: 28px;
   font-weight: bold;
-  color:#864a98;
+  color: #864a98;
   text-align: center;
 }
 
-.myprofile_display_container{
+.myprofile_display_container {
   width: 440px;
-  overflow-y:auto;
+  overflow-y: auto;
   overflow-x: hidden;
   height: 460px;
   border: solid 2px #bfa0c8;
@@ -373,102 +401,100 @@ export default {
   margin-left: 50px;
 }
 
-.myprofile_display_container::-webkit-scrollbar{
+.myprofile_display_container::-webkit-scrollbar {
   width: 10px;
 }
-.myprofile_display_container::-webkit-scrollbar-thumb{
+.myprofile_display_container::-webkit-scrollbar-thumb {
   background-color: #bfa0c8;
   border-radius: 5px;
 }
-.myprofile_display_container::-webkit-scrollbar-button{
+.myprofile_display_container::-webkit-scrollbar-button {
   display: none;
 }
-.myprofile_display_container::-webkit-scrollbar-track{
+.myprofile_display_container::-webkit-scrollbar-track {
   background-color: #f3f3f3;
 }
 
-
-.myprofile_display{
+.myprofile_display {
   height: 480px;
   width: 400px;
   margin-left: 70px;
-  border:dotted;
+  border: dotted;
   border-radius: 5px;
-  border-width:2px;
+  border-width: 2px;
   border-color: #864a98;
 }
 
-.myprofile_display_content{
+.myprofile_display_content {
   width: 400px;
   height: 120px;
-  background-color:#f3f3f3;
+  background-color: #f3f3f3;
   margin-bottom: 10px;
   margin-left: 15px;
   margin-top: 10px;
   cursor: pointer;
 }
-.myprofile_display_content:hover{
+.myprofile_display_content:hover {
   width: 400px;
   height: 120px;
   border: solid 2px #bfa0c8;
-  background-color:#f3f3f3;
+  background-color: #f3f3f3;
   margin-bottom: 10px;
   margin-left: 15px;
   margin-top: 10px;
   cursor: pointer;
 }
-.myprofile_display_content img{
+.myprofile_display_content img {
   width: 100px;
   height: 100px;
 }
 
-.myprofile_display_content td{
+.myprofile_display_content td {
   width: 180px;
   height: 120px;
 }
-.myprofile_display_content p{
+.myprofile_display_content p {
   font-size: 18px;
-  color:#864a98;
+  color: #864a98;
   font-weight: bold;
 }
 
-.myprofile_talk_to_sb_new{
+.myprofile_talk_to_sb_new {
   width: 400px;
   height: 120px;
-  background-color:#f3e6f7;
+  background-color: #f3e6f7;
   margin-bottom: 10px;
   margin-left: 15px;
   margin-top: 20px;
   cursor: pointer;
 }
-.myprofile_talk_to_sb_new:hover{
+.myprofile_talk_to_sb_new:hover {
   width: 400px;
   height: 120px;
-  border:solid 2px #bfa0c8;
-  background-color:#f3e6f7;
+  border: solid 2px #bfa0c8;
+  background-color: #f3e6f7;
   margin-bottom: 10px;
   margin-left: 15px;
   margin-top: 20px;
   cursor: pointer;
 }
-.myprofile_talk_to_sb_new img{
+.myprofile_talk_to_sb_new img {
   width: 100px;
   height: 100px;
 }
 
-.myprofile_talk_to_sb_new td{
+.myprofile_talk_to_sb_new td {
   width: 180px;
   height: 120px;
 }
 
-.myprofile_talk_to_sb_new p{
+.myprofile_talk_to_sb_new p {
   font-size: 16px;
-  color:#864a98;
+  color: #864a98;
   font-weight: bold;
 }
 
-
-.myprofile_addfriend{
+.myprofile_addfriend {
   height: 50px;
   margin-bottom: 30px;
 }
@@ -481,7 +507,7 @@ export default {
   margin-left: 6px;
   margin-top: 15px;
   font-size: 18px;
-  color:#bfa0c8;
+  color: #bfa0c8;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -493,15 +519,15 @@ export default {
   margin-left: 6px;
   margin-top: 15px;
   font-size: 18px;
-  color:white;
+  color: white;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.myprofile_switch{
+.myprofile_switch {
   margin-left: 50px;
 }
-#videocall_btn{
+#videocall_btn {
   height: 44px;
   width: 255px;
   background-color: #bfa0c8;
@@ -512,7 +538,7 @@ export default {
   border-radius: 5px;
   cursor: pointer;
 }
-#videocall_btn:hover{
+#videocall_btn:hover {
   height: 44px;
   width: 255px;
   background-color: white;
@@ -522,7 +548,7 @@ export default {
   font-size: 18px;
   border-radius: 5px;
 }
-#videocall_btn:active{
+#videocall_btn:active {
   height: 44px;
   width: 255px;
   background-color: white;
@@ -532,7 +558,7 @@ export default {
   font-size: 18px;
   border-radius: 5px;
 }
-#me_btn{
+#me_btn {
   height: 44px;
   width: 175px;
   background-color: #bfa0c8;
@@ -543,7 +569,7 @@ export default {
   border-radius: 5px;
   cursor: pointer;
 }
-#me_btn:hover{
+#me_btn:hover {
   height: 44px;
   width: 175px;
   background-color: white;
@@ -553,7 +579,7 @@ export default {
   font-size: 18px;
   border-radius: 5px;
 }
-#me_btn:active{
+#me_btn:active {
   height: 44px;
   width: 175px;
   background-color: white;
@@ -563,5 +589,4 @@ export default {
   font-size: 18px;
   border-radius: 5px;
 }
-
 </style>

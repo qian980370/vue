@@ -15,7 +15,7 @@
       <div class="me_form">
         <div class="me_form_header">
           <p>Me</p>
-          <td><div class="back_button" @click="$router.push('/login')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
+          <td><div class="back_button" @click="$router.push('/taponfriend')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
 
         </div>
         <hr>
@@ -46,14 +46,6 @@
           </div>
         </div>
 
-        <div class="me_switch">
-          <table>
-            <tr>
-              <td><button id="videocall_btn" @click="$router.push('/videocall')">Make a Video Call</button></td>
-              <td><button id="me_btn">Me</button></td>
-            </tr>
-          </table>
-        </div>
       </div>
 
     </div>

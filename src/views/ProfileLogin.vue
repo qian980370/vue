@@ -12,7 +12,7 @@
 
         <div class="profiles_display_container">
           <!--------Table------>
-          <div class="profiles_display_content" v-for="item in userinfo" @click=next(item)>
+          <div class="profiles_display_content" v-for="item in userinfo" :key="item.id" @click=next(item)>
             <table >
               <tr>
                 <td><img  :src="item.icon"></td>
