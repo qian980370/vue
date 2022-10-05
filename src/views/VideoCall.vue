@@ -1,145 +1,114 @@
 <template>
+  <WisdomHeader></WisdomHeader>
+  <div class="container">
+    <div
+      class="conference_settings_background"
+      id="conference_settings_background"
+    >
+      <div class="conference_settings">
+        <div class="conference_settings_container">
+          <h2>Video Call</h2>
 
+          <!--get name method--->
+          <div class="label">Your name</div>
+          <input type="text" id="your_name" value="" /><br />
 
-  <body>
-  <div class="logo_and_title">
-    <table>
-      <tr>
-        <td><img  src="../image/logo.png" alt="logo"></td>
-        <td><h1>Wisdom Connect</h1></td>
-      </tr>
-    </table>
-  </div>
+          <div class="label">Bandwidth</div>
+          <select id="bandwidth">
+            <option value="1920">Maximum Bandwidth (1920kbps)</option>
+            <option value="1280">High Bandwidth (1280kbps)</option>
+            <option value="576">Medium Bandwidth (576kbps)</option>
+            <option value="192">Low Bandwidth (192kbps)</option></select
+          ><br />
 
-
-  <div class="interests_container">
-    <div class="interests_form">
-      <div class="interests_form_header" style="margin: 30px auto"><p>Your Interest List</p></div>
-
-      <hr>
-
-
-
-      <div class="interests_display_container">
-        <!--------Table------>
-
-        <!--------Table------>
-        <div class="interests_display_content">
-          <table>
-            <tr>
-              <td>
-                <img src="@/image/interests/basketball.jpg">
-                <p>Basketball</p>
-              </td>
-              <td>
-                <img src="@/image/interests/boardgame.jpg">
-                <p>Board Game</p>
-              </td>
-              <td>
-                <img src="@/image/interests/chess.jpg">
-                <p>Chess</p>
-              </td>
-            </tr>
-          </table>
+          <button @click="doCall()">Join Now</button>
         </div>
-        <!--------Table------>
-        <div class="interests_display_content">
-          <table>
-            <tr>
-              <td>
-                <img src="@/image/interests/mountaineering.jpg">
-                <p>Mountaineering</p>
-              </td>
-              <td>
-                <img src="@/image/interests/reading.jpg">
-                <p>Reading</p>
-              </td>
-              <td>
-                <img src="@/image/interests/skateboarding.jpg">
-                <p>Skateboarding</p>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <!--------Table------>
-        <div class="interests_display_content">
-          <table>
-            <tr>
-              <td>
-                <img src="@/image/interests/skiing.jpg">
-                <p>Skiing</p>
-              </td>
-              <td>
-                <img src="@/image/interests/soccer.jpg">
-                <p>Soccer</p>
-              </td>
-              <td>
-                <img src="@/image/interests/surfing.jpg">
-                <p>Surfing</p>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <!--------Table------>
-        <div class="interests_display_content">
-          <table>
-            <tr>
-              <td>
-                <img src="@/image/interests/videogame.jpg">
-                <p>Video Game</p>
-              </td>
-              <td>
-                <img src="@/image/interests/Baseball.jpg">
-                <p>Baseball</p>
-              </td>
-              <td>
-                <img src="@/image/interests/Music.jpg">
-                <p>Music</p>
-              </td>
-            </tr>
-          </table>
-        </div>
-
       </div>
-      <div class="interests_buttons">
-        <table>
-          <tr>
-            <td><button id="remove_btn" @click="$router.push('/interestlist')">Remove</button></td>
-            <td><button id="more_btn" @click="$router.push('/moreinterest')">More</button></td>
-          </tr>
-        </table>
-      </div>
-
-
     </div>
 
+    <!--can keep this part--->
+    <div class="conference_video_container" id="conference_video_container">
+      <div class="conference_video">
+        <video id="video" autoplay="autoplay"></video>
+      </div>
 
+      <div class="conference_selfview">
+        <video id="selfview" autoplay="autoplay" muted="true"></video>
+      </div>
 
+      <div class="chat_box" id="chat_box">
+        <div class="chat_content">
+          <div class="chat_content_text" id="chat_content_text"></div>
+        </div>
+        <div class="chat_message">
+          <div class="chat_close" @click="closeChat()">
+            <i class="fas fa-times"></i>
+          </div>
+          <input type="text" value="" id="chat_message" />
+          <button @click="sendMessage()">Send</button>
+        </div>
+      </div>
 
+      <div class="controls">
+        <div class="control" @click="muteToggle()" id="mute_button">
+          <i class="fas fa-microphone-slash"></i>
+        </div>
+        <!--add a method in endCall, send status to backend--->
+        <div class="control" @click="endCall()">
+          <i class="fas fa-phone-slash"></i>
+        </div>
+        <div class="control" @click="showChat()">
+          <i class="fas fa-comment-dots"></i>
+        </div>
+        <div class="control" @click="switchCamera()">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+      </div>
+    </div>
   </div>
-
-  </body>
-
 </template>
 
 <script>
 import request from "@/utils/request";
+import WisdomHeader from "@/components/WisdomHeader.vue";
+import {
+  closeChat,
+  muteToggle,
+  sendMessage,
+  endCall,
+  showChat,
+  switchCamera,
+  doCall,
+  getMediaDevices
+} from "../utils/webui.js";
 
 export default {
   name: "InterestListRemove",
-  data(){
-    return{
+  data() {
+    return {
       form: {},
-      query: '',
-      search: '',
-      hobbyTableData:[
-      ],
-      profile : localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
-    }
+      query: "",
+      search: "",
+      hobbyTableData: [],
+      configuration: {
+        video: {
+          height: {
+            min: 1080,
+          },
+          width: {
+            min: 1920,
+          },
+        },
+        audio: true,
+      },
+      profile: localStorage.getItem("profile")
+        ? JSON.parse(localStorage.getItem("profile"))
+        : null,
+    };
   },
   computed: {
     sliceList() {
-      return function (data,count) {
+      return function (data, count) {
         if (data != undefined) {
           let index = 0;
           let arrTemp = [];
@@ -148,189 +117,291 @@ export default {
             if (arrTemp.length <= index) {
               arrTemp.push([]);
             }
-            arrTemp[index].push(data[i])
+            arrTemp[index].push(data[i]);
           }
-          return arrTemp
+          return arrTemp;
         }
-      }
-    }
+      };
+    },
   },
   created() {
-    this.load()
+    this.load();
     console.log(this.profile);
+    // test();
   },
-  methods:{
-    refreshProfile(){
-      this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {}
+  mounted() {
+    getMediaDevices(this.configuration)
+    
+  },
+  methods: {
+    doCall() {
+      doCall();
+    },
+    closeChat() {
+      closeChat();
+    },
+    sendMessage() {
+      sendMessage();
+    },
+    muteToggle() {
+      muteToggle();
+    },
+    endCall() {
+      endCall();
+    },
+    showChat() {
+      showChat();
+    },
+    switchCamera() {
+      switchCamera();
+    },
+    refreshProfile() {
+      this.profile = localStorage.getItem("profile")
+        ? JSON.parse(localStorage.getItem("profile"))
+        : {};
       // console.log(this.profile);
       this.privacy = this.profile.privacy;
     },
-    load(){
+    load() {
       this.refreshProfile();
       this.getAllHobbies();
       this.getRandomHobbies();
-
     },
-    getAllHobbies(){
-      request.get("/hobby/hobbyList", {
-        params: {
-          profileID: this.profile.id,
-        }
-      }).then(res =>{
-        console.log(res);
-        this.hobbyTableData = res.data;
-      })
+    getAllHobbies() {
+      request
+        .get("/hobby/hobbyList", {
+          params: {
+            profileID: this.profile.id,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          this.hobbyTableData = res.data;
+        });
     },
-    getRandomHobbies(){
-      request.get("/hobby/randomHobbies", {
-        params: {
-          profileID: this.profile.id,
-        }
-      }).then(res =>{
-        console.log(res);
-        this.randomHobbyTableData = res.data;
-      })
+    getRandomHobbies() {
+      request
+        .get("/hobby/randomHobbies", {
+          params: {
+            profileID: this.profile.id,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          this.randomHobbyTableData = res.data;
+        });
     },
-  }
-}
+  },
+  components: { WisdomHeader },
+};
 </script>
 
 <style scoped>
-.logo_and_title{
-  width: 400px;
-  height: 120px;
-  text-align: center;
-  padding-left: 37%;
-  padding-top: 2%;
-}
-.logo_and_title img{
-  width: 80px;
-}
-.logo_and_title h1{
-  width: 300px;
-}
-.interests_container{
-  /* background: url('jack-finnigan-M9EctVUPrp4-unsplash.jpg') no-repeat center center fixed; */
+body {
+  padding: 0;
+  margin: 0;
 
-  height: 1000px;
-  /* background-color: #f3e6f7; */
-  /* padding: 50px; */
-  /* background-color: azure; */
+  font-family: Arial;
+
+  background-color: white;
 }
 
-.interests_form{
-  width: 540px;
-  height: 800px;
-  /* border: 2px solid red; */
-  margin:20px auto;
-  text-align: center;
-  border:solid 2px;
-  border-color:#864a98;
+.conference_settings_background {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: fixed;
+
+  background-color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.conference_settings {
+  width: 500px;
+  height: 400px;
+
+  background-color: white;
+  border: solid 2px;
+  border-color: #864a98;
   border-radius: 5px;
+
+  padding: 10px;
+
+  display: flex;
+  justify-content: center;
 }
-.interests_form_header p{
+
+.conference_settings_container {
+  width: 400px;
+  margin-left: 24px;
+}
+.conference_settings_container h2 {
   font-size: 28px;
   font-weight: bold;
-  color:#864a98;
+  color: #864a98;
   text-align: center;
-}
-.interests_display_header{
-  margin-top: 30px;
-}
-.interests_display_header p{
-  font-size: 18px;
-  font-weight: bold;
-  color:#864a98;
-  text-align: center;
-}
-
-.interests_display_container{
-  width: 440px;
-  overflow-y:auto;
-  overflow-x: hidden;
-  height: 460px;
-  border: solid 2px #bfa0c8;
-  border-radius: 5px;
-  margin-left: 50px;
   margin-top: 40px;
+  margin-bottom: 20px;
 }
 
-.interests_display_container::-webkit-scrollbar{
-  width: 10px;
-}
-.interests_display_container::-webkit-scrollbar-thumb{
-  background-color: #bfa0c8;
-  border-radius: 5px;
-}
-.interests_display_container::-webkit-scrollbar-button{
-  display: none;
-}
-.interests_display_container::-webkit-scrollbar-track{
-  background-color: #f3f3f3;
-}
-
-
-.interests_display{
-  height: 480px;
-  width: 400px;
-  margin-left: 70px;
-  border:dotted;
-  border-radius: 5px;
-  border-width:2px;
-  border-color: #864a98;
-}
-
-.interests_display_content{
-  width: 400px;
-  height: 140px;
-  margin-top: 20px;
+.conference_settings .label {
+  padding-left: 5px;
   margin-bottom: 10px;
-  margin-left: 15px;
+  margin-top: 20px;
 }
-.interests_display_content img{
-  width: 100px;
-  height: 100px;
+
+.conference_settings input[type="text"] {
+  height: 40px;
+  width: 360px;
+  border: 2px solid;
+  font-size: 18px;
+  border-radius: 5px;
+  border-color: #bfa0c8;
+  outline: none;
+}
+
+.conference_settings select {
+  height: 44px;
+  width: 370px;
+  border: 2px solid;
+  font-size: 18px;
+  border-radius: 5px;
+  border-color: #bfa0c8;
+  outline: none;
+}
+
+.conference_settings button {
+  height: 44px;
+  width: 370px;
+  background-color: #bfa0c8;
+  color: white;
+  border: 0px;
+  /* margin-top: 45px; */
+  margin-top: 40px;
+  font-size: 18px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-.interests_display_content td{
-  width: 240px;
-  height: 160px;
-}
-.interests_display_content tr{
-  padding-top: 40px;
-}
-
-.interests_display_content p{
-  font-size: 14px;
-  color:#864a98;
-  font-weight: bold;
-  text-align: center;
-}
-.interests_buttons{
-  margin-left: 50px;
-}
-#remove_btn{
-  height: 44px;
-  width: 215px;
-  background-color: #bfa0c8;
-  color: white;
-  border: 0px;
-  margin-top: 70px;
-  font-size: 18px;
+.conference_settings button:hover {
+  background-color: white;
+  color: #bfa0c8;
+  border: solid 2px #bfa0c8;
+  /* margin-top: 45px; */
   border-radius: 5px;
-}
-#more_btn{
-  height: 44px;
-  width: 215px;
-  background-color: #bfa0c8;
-  color: white;
-  border: 0px;
-  margin-top: 70px;
-  font-size: 18px;
-  border-radius: 5px;
+  cursor: pointer;
 }
 
+.conference_video {
+  height: 100vh;
 
+  display: flex;
+}
 
+.conference_video video {
+  height: 100vh;
+  z-index: -99;
+}
+
+.conference_selfview {
+  width: 200px;
+  height: 100px;
+
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+
+.conference_selfview video {
+  width: 200px;
+}
+
+.chat_box {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+
+  align-items: center;
+  justify-content: center;
+
+  left: 0;
+  top: 50%;
+
+  height: 500px;
+
+  width: 300px;
+  margin-top: -250px;
+
+  background-color: #fff;
+
+  border-radius: 0px 5px 5px 0px;
+  padding: 10px;
+}
+
+.chat_content {
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
+.chat_content_text {
+  align-self: flex-end;
+}
+
+.chat_message {
+  padding: 10px;
+}
+
+.chat_close {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  font-size: 30px;
+}
+
+.chat_close:hover {
+  cursor: pointer;
+}
+
+.controls {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+
+  width: 300px;
+  height: 50px;
+  margin-left: -150px;
+  padding: 5px;
+
+  border-radius: 5px 5px 0px 0px;
+
+  background-color: #fff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 25px;
+}
+
+.control {
+  padding: 5px;
+}
+
+.control:hover {
+  cursor: pointer;
+  color: #ccc;
+}
+
+.conference_video_container {
+  display: none;
+
+  align-content: center;
+  justify-content: center;
+}
 </style>

@@ -66,7 +66,8 @@
               <td>
                 <button
                   id="videocall_btn"
-                  @click="callFriend(selectedFriendId)"
+                  
+                  @click="$router.push('/VideoCall')"
                 >
                   Make a Video Call
                 </button>
