@@ -31,7 +31,7 @@
         <div class="interests_display_container">
           <div class="interests_display_content">
             <table>
-              <tr v-for="(row,index) in sliceList(hobbyTableData,3)" >
+              <tr v-for="(row,index) in sliceList(hobbyTableData,3)" :key="index" >
                 <td v-for="(data,i) in row " :key="i">
                   <div class="interests_display_content_img">
                     <img :src="data.icon">

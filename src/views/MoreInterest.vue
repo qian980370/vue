@@ -1,22 +1,19 @@
 <template>
-  <head>
-    <meta charset="UTF-8">
-    <title>More Interests</title>
-  </head>
+  <Wisdom-header></Wisdom-header>
 
 
-  <div id="logo_and_title">
-    <table>
-      <tr>
-        <td width="100px"><img  src="../image/logo.png" alt="logo" width="80px"></td>
-        <td><h1>Wisdom Connect</h1></td>
-      </tr>
-    </table>
-  </div>
+  
 
   <div class="more_interests_container">
     <div class="more_interests_form">
-      <div class="more_interests_form_header"><p>Add Interests</p></div>
+      <div class="more_interests_form_header">
+        <table class="interests_form_header_table">
+          <tr>
+            <td><div class="back_button" @click="$router.push('/interestlist')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
+            <td><p>Add Interests</p></td>
+          </tr>
+        </table>
+      </div>
 
       <hr>
 
@@ -24,7 +21,7 @@
       <div class="interests_display_container">
         <div class="interests_display_content">
           <table>
-            <tr v-for="(row,index) in sliceList(randomHobbyTableData,3)" >
+            <tr v-for="(row,index) in sliceList(randomHobbyTableData,3)" :key="index">
               <td v-for="(data,i) in row " :key="i">
                 <div class="interests_display_content_img">
                   <img :src="data.icon">
@@ -51,95 +48,95 @@
 
 <script>
 import request from "@/utils/request";
+import WisdomHeader from "@/components/WisdomHeader.vue";
+
 export default {
-  name: "MoreInterest",
-  data(){
-    return{
-      form: {},
-      query: '',
-      search: '',
-      randomHobbyTableData:[
-      ],
-      profile : localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
-    }
-  },
-  computed: {
-    sliceList() {
-      return function (data,count) {
-        if (data != undefined) {
-          let index = 0;
-          let arrTemp = [];
-          for (let i = 0; i < data.length; i++) {
-            index = parseInt(i / count);
-            if (arrTemp.length <= index) {
-              arrTemp.push([]);
-            }
-            arrTemp[index].push(data[i])
-          }
-          return arrTemp
+    name: "MoreInterest",
+    data() {
+        return {
+            form: {},
+            query: "",
+            search: "",
+            randomHobbyTableData: [],
+            profile: localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
+        };
+    },
+    computed: {
+        sliceList() {
+            return function (data, count) {
+                if (data != undefined) {
+                    let index = 0;
+                    let arrTemp = [];
+                    for (let i = 0; i < data.length; i++) {
+                        index = parseInt(i / count);
+                        if (arrTemp.length <= index) {
+                            arrTemp.push([]);
+                        }
+                        arrTemp[index].push(data[i]);
+                    }
+                    return arrTemp;
+                }
+            };
         }
-      }
-    }
-  },
-  created() {
-    this.load()
-    console.log(this.profile);
-  },
-  methods:{
-    refreshProfile(){
-      this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {}
-      // console.log(this.profile);
-      this.privacy = this.profile.privacy;
     },
-    load(){
-      this.refreshProfile();
-      this.getAllHobbies();
-      this.getRandomHobbies();
-
+    created() {
+        this.load();
+        console.log(this.profile);
     },
-    getAllHobbies(){
-      request.get("/hobby/hobbyList", {
-        params: {
-          profileID: this.profile.id,
-        }
-      }).then(res =>{
-        console.log(res);
-        this.hobbyTableData = res.data;
-      })
+    methods: {
+        refreshProfile() {
+            this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {};
+            // console.log(this.profile);
+            this.privacy = this.profile.privacy;
+        },
+        load() {
+            this.refreshProfile();
+            this.getAllHobbies();
+            this.getRandomHobbies();
+        },
+        getAllHobbies() {
+            request.get("/hobby/hobbyList", {
+                params: {
+                    profileID: this.profile.id,
+                }
+            }).then(res => {
+                console.log(res);
+                this.hobbyTableData = res.data;
+            });
+        },
+        getRandomHobbies() {
+            request.get("/hobby/randomHobbies", {
+                params: {
+                    profileID: this.profile.id,
+                }
+            }).then(res => {
+                console.log(res);
+                this.randomHobbyTableData = res.data;
+            });
+        },
+        addHobby(id) {
+            let friendRequestForm;
+            friendRequestForm = {};
+            friendRequestForm.profileID = this.profile.id;
+            friendRequestForm.targetID = id;
+            request.post("/hobby/addHobby", friendRequestForm).then(res => {
+                if (res.code === "200") {
+                    this.$message({
+                        type: "success",
+                        message: "successfully add hobby"
+                    });
+                    this.load();
+                }
+                else {
+                    this.$message({
+                        type: "error",
+                        message: res.msg
+                    });
+                }
+            });
+        },
     },
-    getRandomHobbies(){
-      request.get("/hobby/randomHobbies", {
-        params: {
-          profileID: this.profile.id,
-        }
-      }).then(res =>{
-        console.log(res);
-        this.randomHobbyTableData = res.data;
-      })
-    },
-    addHobby(id){
-      let friendRequestForm;
-      friendRequestForm = {};
-
-      friendRequestForm.profileID = this.profile.id;
-      friendRequestForm.targetID = id;
-
-      request.post("/hobby/addHobby", friendRequestForm).then(res => {
-        if (res.code === '200') {
-          this.$message({
-            type: "success",
-            message: "successfully add hobby"
-          })
-          this.load()
-        } else {
-          this.$message({
-            type: "error",
-            message: res.msg
-          })
-        }
-      })
-    },
-  }
+    components: { WisdomHeader }
 }
 </script>
 
@@ -170,8 +167,10 @@ export default {
   border-color:#864a98;
   border-radius: 5px;
 }
+.more_interests_form_header{
+  padding: 2rem 0;
+}
 .more_interests_form_header p{
-  width: 370px;
   font-size: 28px;
   font-weight: bold;
   color:#864a98;
@@ -179,9 +178,14 @@ export default {
 }
 .interests_display_header{
   margin-top: 30px;
+
+}
+
+.more_interests_display_header{
+  margin-top: 20px;
 }
 .more_interests_display_header p{
-  font-size: 18px;
+  font-size: 25px;
   font-weight: bold;
   color:#864a98;
   text-align: center;
@@ -332,5 +336,9 @@ export default {
   margin-top: 200px;
   font-size: 18px;
   border-radius: 5px;
+}
+.back_button{
+  width: 80px;
+  cursor: pointer;
 }
 </style>

@@ -1,70 +1,82 @@
 <template>
-  <div style="width: 100%; height: 120vh;  overflow: hidden">
-
+  <div style="width: 100%; height: 120vh; overflow: hidden">
     <div class="logo_and_title">
       <table>
         <tr>
-          <td><img  src="../image/logo.png" alt="logo"></td>
+          <td><img src="../image/logo.png" alt="logo" /></td>
           <td><h1>Wisdom Connect</h1></td>
         </tr>
       </table>
     </div>
 
-
-   <div class="interests_container">
-    <div class="interests_form">
-      <div class="interests_form_header" >
-        <table class="=interests_form_header_table">
-          <tr>
-            <td><div class="back_button" @click="$router.push('/personal')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
-            <td><p>Your Interest List</p></td>
-          </tr>
-        </table>
-      </div>
-
-      <hr>
-
-
-
-      <div class="interests_display_container">
-        <div class="interests_display_content">
-          <table>
-            <tr v-for="(row,index) in sliceList(hobbyTableData,3)" >
-              <td v-for="(data,i) in row " :key="i">
-                <div class="interests_display_content_img">
-                  <img :src="data.icon">
-                  <button id="delete_interest_btn" @click="deleteHobby(data.id)"></button>
+    <div class="interests_container">
+      <div class="interests_form">
+        <div class="interests_form_header">
+          <table class="interests_form_header_table">
+            <tr>
+              <td>
+                <div class="back_button" @click="$router.push('/personal')">
+                  <img
+                    src="../image/back_icon.png"
+                    style="height: 30px"
+                    alt="back_icon"
+                  />
                 </div>
-                <p>{{data.name}}</p>
+              </td>
+              <td><p>Your Interest List</p></td>
+            </tr>
+          </table>
+        </div>
+
+        <hr />
+
+        <div class="interests_display_container">
+          <div class="interests_display_content">
+            <table>
+              <tr
+                v-for="(row, index) in sliceList(hobbyTableData, 3)"
+                :key="index"
+              >
+                <td v-for="(data, i) in row" :key="i">
+                  <div class="interests_display_content_img">
+                    <img :src="data.icon" />
+                    <button
+                      id="delete_interest_btn"
+                      @click="deleteHobby(data.id)"
+                    ></button>
+                  </div>
+                  <p>{{ data.name }}</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--------Table------>
+
+          <!--------Table------>
+        </div>
+
+        <div class="interests_buttons">
+          <table>
+            <tr>
+              <td>
+                <button
+                  id="remove_btn"
+                  @click="$router.push('/interestlistremove')"
+                >
+                  Remove
+                </button>
+              </td>
+              <td>
+                <button id="more_btn" @click="$router.push('/moreinterest')">
+                  More
+                </button>
               </td>
             </tr>
           </table>
         </div>
-        <!--------Table------>
-
-
-
-        <!--------Table------>
-
-
       </div>
-
-      <div class="interests_buttons">
-        <table>
-          <tr>
-            <td><button id="remove_btn" @click="$router.push('/interestlistremove')">Remove</button></td>
-            <td><button id="more_btn" @click="$router.push('/moreinterest')">More</button></td>
-          </tr>
-        </table>
-      </div>
-
     </div>
-
-   </div>
-
   </div>
-
-
 </template>
 
 <script>
@@ -72,19 +84,20 @@ import request from "@/utils/request";
 
 export default {
   name: "InterestListRemove",
-  data(){
-    return{
+  data() {
+    return {
       form: {},
-      query: '',
-      search: '',
-      hobbyTableData:[
-      ],
-      profile : localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
-    }
+      query: "",
+      search: "",
+      hobbyTableData: [],
+      profile: localStorage.getItem("profile")
+        ? JSON.parse(localStorage.getItem("profile"))
+        : null,
+    };
   },
   computed: {
     sliceList() {
-      return function (data,count) {
+      return function (data, count) {
         if (data != undefined) {
           let index = 0;
           let arrTemp = [];
@@ -93,68 +106,73 @@ export default {
             if (arrTemp.length <= index) {
               arrTemp.push([]);
             }
-            arrTemp[index].push(data[i])
+            arrTemp[index].push(data[i]);
           }
-          return arrTemp
+          return arrTemp;
         }
-      }
-    }
+      };
+    },
   },
   created() {
-    this.load()
+    this.load();
     console.log(this.profile);
   },
-  methods:{
-    refreshProfile(){
-      this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {}
+  methods: {
+    refreshProfile() {
+      this.profile = localStorage.getItem("profile")
+        ? JSON.parse(localStorage.getItem("profile"))
+        : {};
       // console.log(this.profile);
       this.privacy = this.profile.privacy;
     },
-    load(){
+    load() {
       this.refreshProfile();
       this.getAllHobbies();
       this.getRandomHobbies();
-
     },
-    getAllHobbies(){
-      request.get("/hobby/hobbyList", {
-        params: {
-          profileID: this.profile.id,
-        }
-      }).then(res =>{
-        console.log(res);
-        this.hobbyTableData = res.data;
-      })
+    getAllHobbies() {
+      request
+        .get("/hobby/hobbyList", {
+          params: {
+            profileID: this.profile.id,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          this.hobbyTableData = res.data;
+        });
     },
-    getRandomHobbies(){
-      request.get("/hobby/randomHobbies", {
-        params: {
-          profileID: this.profile.id,
-        }
-      }).then(res =>{
-        console.log(res);
-        this.randomHobbyTableData = res.data;
-      })
+    getRandomHobbies() {
+      request
+        .get("/hobby/randomHobbies", {
+          params: {
+            profileID: this.profile.id,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          this.randomHobbyTableData = res.data;
+        });
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
-.logo_and_title{
+.logo_and_title {
   width: 400px;
   height: 120px;
   text-align: center;
   padding-left: 37%;
   padding-top: 2%;
 }
-.logo_and_title img{
+.logo_and_title img {
   width: 80px;
 }
-.logo_and_title h1{
+.logo_and_title h1 {
   width: 300px;
 }
-.interests_container{
+.interests_container {
   /* background: url('jack-finnigan-M9EctVUPrp4-unsplash.jpg') no-repeat center center fixed; */
 
   height: 1000px;
@@ -163,35 +181,35 @@ export default {
   /* background-color: azure; */
 }
 
-.interests_form{
+.interests_form {
   width: 540px;
   height: 800px;
   /* border: 2px solid red; */
-  margin:20px auto;
+  margin: 20px auto;
   text-align: center;
-  border:solid 2px;
-  border-color:#864a98;
+  border: solid 2px;
+  border-color: #864a98;
   border-radius: 5px;
 }
-.interests_form_header p{
+.interests_form_header p {
   font-size: 28px;
   font-weight: bold;
-  color:#864a98;
+  color: #864a98;
   text-align: center;
 }
-.interests_display_header{
+.interests_display_header {
   margin-top: 30px;
 }
-.interests_display_header p{
+.interests_display_header p {
   font-size: 18px;
   font-weight: bold;
-  color:#864a98;
+  color: #864a98;
   text-align: center;
 }
 
-.interests_display_container{
+.interests_display_container {
   width: 440px;
-  overflow-y:auto;
+  overflow-y: auto;
   overflow-x: hidden;
   height: 460px;
   border: solid 2px #bfa0c8;
@@ -200,62 +218,61 @@ export default {
   margin-top: 40px;
 }
 
-.interests_display_container::-webkit-scrollbar{
+.interests_display_container::-webkit-scrollbar {
   width: 10px;
 }
-.interests_display_container::-webkit-scrollbar-thumb{
+.interests_display_container::-webkit-scrollbar-thumb {
   background-color: #bfa0c8;
   border-radius: 5px;
 }
-.interests_display_container::-webkit-scrollbar-button{
+.interests_display_container::-webkit-scrollbar-button {
   display: none;
 }
-.interests_display_container::-webkit-scrollbar-track{
+.interests_display_container::-webkit-scrollbar-track {
   background-color: #f3f3f3;
 }
 
-
-.interests_display{
+.interests_display {
   height: 480px;
   width: 400px;
   margin-left: 70px;
-  border:dotted;
+  border: dotted;
   border-radius: 5px;
-  border-width:2px;
+  border-width: 2px;
   border-color: #864a98;
 }
 
-.interests_display_content{
+.interests_display_content {
   width: 400px;
   height: 140px;
   margin-top: 20px;
   margin-bottom: 10px;
   margin-left: 15px;
 }
-.interests_display_content img{
+.interests_display_content img {
   width: 100px;
   height: 100px;
   cursor: pointer;
 }
 
-.interests_display_content td{
+.interests_display_content td {
   width: 240px;
   height: 160px;
 }
-.interests_display_content tr{
+.interests_display_content tr {
   padding-top: 40px;
 }
 
-.interests_display_content p{
+.interests_display_content p {
   font-size: 14px;
-  color:#864a98;
+  color: #864a98;
   font-weight: bold;
   text-align: center;
 }
-.interests_buttons{
+.interests_buttons {
   margin-left: 50px;
 }
-#remove_btn{
+#remove_btn {
   height: 44px;
   width: 215px;
   background-color: #bfa0c8;
@@ -265,7 +282,7 @@ export default {
   font-size: 18px;
   border-radius: 5px;
 }
-#more_btn{
+#more_btn {
   height: 44px;
   width: 215px;
   background-color: #bfa0c8;
@@ -275,15 +292,12 @@ export default {
   font-size: 18px;
   border-radius: 5px;
 }
-.back_button{
+.back_button {
   width: 80px;
   cursor: pointer;
 }
-.interests_form_header{
+.interests_form_header {
   margin-top: 30px;
   margin-bottom: 30px;
 }
-
-
-
 </style>
