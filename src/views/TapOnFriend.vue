@@ -42,6 +42,7 @@
             v-for="item in friendTableData"
             :key="item.id"
             @click="clickFriend(item)"
+            :class="{ 'select-border': selectedFriendId === item.id }"
           >
             <table>
               <tr>
@@ -52,7 +53,8 @@
                 <td class="myprofile_display_content_status">
                   <p v-if="item.online === 1">online</p>
                   <p v-else>offline</p>
-                  <p v-if="item.oncall === 1">available</p>
+
+                  <p v-if="isAvailable(item)">available</p>
                   <p v-else>unavailable</p>
                 </td>
               </tr>
@@ -66,8 +68,7 @@
               <td>
                 <button
                   id="videocall_btn"
-                  
-                  @click="$router.push('/VideoCall')"
+                  @click="getConferenceRoom(selectedFriendId)"
                 >
                   Make a Video Call
                 </button>
@@ -80,46 +81,38 @@
         </div>
       </div>
     </div>
-    <el-dialog
-      id="chatForm"
-      v-model="dialogChatVisible1"
-      :title="this.roomId"
-      width="30%"
-      :before-close="chatClose"
-    >
-      <div style="width: 85%">
-        <el-form>
-          <el-form-item :label="this.state"> </el-form-item>
-          <el-form-item>
-            <el-button
-              type="primary"
-              @click="chatAccept"
-              :disabled="this.disableAccept"
-              >Accept</el-button
-            >
-            <el-button @click="chatClose">Refuse</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-dialog>
-
-    <el-dialog
-      id="chatForm2"
-      v-model="dialogChatVisible2"
-      :title="this.roomId"
-      width="30%"
-      :before-close="chatClose"
-    >
-      <div style="width: 85%">
-        <el-form>
-          <el-form-item :label="this.state"> </el-form-item>
-          <el-form-item>
-            <el-button @click="chatClose">Refuse</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-dialog>
   </div>
+  <el-dialog
+    title="Waiting for response..."
+    v-model="centerDialogVisible1"
+    width="30%"
+    center
+  >
+    <span class="dialog-footer">
+      <el-button @click="centerDialogVisible1 = false">Cancel</el-button>
+    </span>
+  </el-dialog>
+  <el-dialog
+    title="Friend is unavailable"
+    v-model="centerDialogVisible2"
+    width="30%"
+    center
+  >
+    <span class="dialog-footer">
+      <el-button @click="centerDialogVisible2 = false">Confirm</el-button>
+    </span>
+  </el-dialog>
+  <el-dialog
+    title="Friend calling"
+    v-model="centerDialogVisible3"
+    width="30%"
+    center
+  >
+    <span class="dialog-footer">
+      <el-button @click="chatAccept">Accept</el-button>
+      <el-button @click="centerDialogVisible3 = false">Reject</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>
@@ -129,12 +122,16 @@ export default {
   name: "TapOnFriend",
   data() {
     return {
+      centerDialogVisible1: false,
+      centerDialogVisible2: false,
+      centerDialogVisible3: false,
+
       websocket: null,
-      webSocketURL: "ws://ericbackend.azurewebsites.net/chat",
+      // webSocketURL: "ws://ericbackend.azurewebsites.net/chat",
+      webSocketURL: "ws://localhost:9090/chat/",
       oncall: false,
       roomId: null,
-      dialogChatVisible1: false,
-      dialogChatVisible2: false,
+
       disableAccept: false,
       state: "no call",
 
@@ -144,13 +141,26 @@ export default {
         ? JSON.parse(localStorage.getItem("profile"))
         : null,
       selectedFriendId: null,
+      profile: localStorage.getItem("profile")
+        ? JSON.parse(localStorage.getItem("profile"))
+        : null,
+      user: localStorage.getItem("user")
+        ? JSON.parse(localStorage.getItem("user"))
+        : null,
+      selectedUser: null,
+      message: "",
+      room: "",
+      password: "",
     };
   },
+  computed: {},
   created() {
     console.log("build");
     this.load();
     this.username = this.profile.username;
-    // this.initialWebSocket();
+    this.initialWebSocket();
+    this.releaseConferenceRoom();
+    
   },
   watch: {
     // $route(to, from) {
@@ -168,12 +178,87 @@ export default {
     }
   },
   methods: {
+    isAvailable(user) {
+      console.log(user);
+      if (user.online === 0) {
+        return false;
+      } else {
+        if (user.oncall === 0) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+    releaseConferenceRoom() {
+      let releaseRoomRequestForm;
+      releaseRoomRequestForm = {};
+
+      releaseRoomRequestForm.profileID = this.profile.id;
+      releaseRoomRequestForm.targetID = null;
+      request
+        .post("/conference/releaseRoom", releaseRoomRequestForm)
+        .then((res) => {
+          // console.log(res);
+          if (res.code === "200") {
+            this.conferenceRoom = null;
+            this.conference = null;
+            this.pin = null;
+            this.$message({
+              type: "success",
+              message: "successfully release a room",
+            });
+          } else {
+            this.$message({
+              type: "error",
+              message: res.msg,
+            });
+          }
+        });
+    },
+    getConferenceRoom(id) {
+      if (!this.isAvailable(this.selectedUser)) {
+        this.centerDialogVisible2 = true;
+        return;
+      }
+
+      request
+        .get("/conference/getRoom", {
+          params: {
+            profileID: this.profile.id,
+          },
+        })
+        .then((res) => {
+          // console.log(res);
+          if (res.code === "200") {
+            this.conferenceRoom = res.data;
+            this.conference = res.data.conferenceid;
+            this.pin = res.data.pin;
+            this.$message({
+              type: "success",
+              message: "successfully get a room",
+            });
+            //console.log(this.conferenceRoom);
+            let callForm = {};
+            callForm.sender = this.profile.id;
+            callForm.receiver = id;
+            callForm.message = "node-" + this.conference + ";pin-" + this.pin;
+            this.websocketSend(JSON.stringify(callForm));
+          } else {
+            this.$message({
+              type: "error",
+              message: res.msg,
+            });
+          }
+        });
+    },
     routeTo(link) {
       this.$router.push("/personal");
     },
     clickFriend(item) {
       this.selectedFriendId = item.id;
-      console.log(this.selectedFriendId);
+      this.selectedUser = item;
+      // console.log(this.selectedFriendId);
     },
     searchUser() {
       request
@@ -190,10 +275,8 @@ export default {
     },
     initialWebSocket() {
       this.webSocketURL =
-        "ws://ericbackend.azurewebsites.net/chat/" +
-        this.user.token +
-        "/" +
-        this.profile.id;
+        // "ws://ericbackend.azurewebsites.net/chat/" +
+        "ws://localhost:9090/chat/" + this.user.token + "/" + this.profile.id;
       if (typeof WebSocket === "undefined") {
         return console.log("your browser is not support websocket");
       }
@@ -206,6 +289,7 @@ export default {
     },
     websocketOnOpen() {},
     chatAccept() {
+      this.centerDialogVisible3 = false;
       this.disableAccept = true;
       let callForm = {};
       callForm.sender = this.profile.id;
@@ -214,17 +298,31 @@ export default {
       callForm.message = "1";
 
       this.websocketSend(JSON.stringify(callForm));
+      // console.log(this.message);
+      this.$router.push({
+        path: "/videocall",
+        query: {
+          room: this.room,
+          password: this.password,
+        },
+      });
     },
     chatClose() {
+      // call form is used to build websocket request
       let callForm = {};
+      // sender is current user's profile id
       callForm.sender = this.profile.id;
+      // receiver is used to save the chat room id
       callForm.receiver = this.roomId;
+      // message = 2 is means this is a call disacceptance websocket request
       callForm.message = "2";
-
+      this.releaseConferenceRoom();
       this.websocketSend(JSON.stringify(callForm));
+      
       this.state = "no call";
       this.oncall = false;
       this.roomId = null;
+      this.message = null;
       this.dialogChatVisible1 = false;
       this.dialogChatVisible2 = false;
     },
@@ -257,18 +355,34 @@ export default {
               },
             })
             .then((res2) => {
+              this.message = res2.data.message;
+
+              const [roomStr, passwordStr] = this.message.split(";");
+              this.room = roomStr.split("-")[1];
+              this.password = passwordStr.split("-")[1];
+
+              // console.log(this.message);
+              // console.log("test")
               if (res2.data.holderone === this.profile.id) {
                 //current user is chat sender
-                this.dialogChatVisible2 = true;
+                this.centerDialogVisible1 = true;
               } else {
                 //current user is chat receiver
-                this.dialogChatVisible1 = true;
+                this.centerDialogVisible3 = true;
               }
               this.state = "on call";
             });
         } else {
           if (res.message == 1) {
-            this.state = "calling";
+            console.log(this.room);
+            console.log(this.password);
+            this.$router.push({
+              path: "/videocall",
+              query: {
+                room: this.room,
+                password: this.password,
+              },
+            });
           } else {
             this.$message({
               type: "error",
@@ -333,6 +447,7 @@ export default {
         .then((res) => {
           console.log(res);
           this.friendTableData = res.data;
+          // console.log(this.friendTableData.forEach(e=>{console.log(e)}));
         });
     },
   },
@@ -589,5 +704,9 @@ export default {
   margin-top: 70px;
   font-size: 18px;
   border-radius: 5px;
+}
+
+.select-border {
+  border: black 2px solid;
 }
 </style>

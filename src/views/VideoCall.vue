@@ -10,8 +10,8 @@
           <h2>Video Call</h2>
 
           <!--get name method--->
-          <div class="label">Your name</div>
-          <input type="text" id="your_name" value="" /><br />
+          <div class="label">name</div>
+          <input type="text" id="your_name" :value=name /><br />
 
           <div class="label">Bandwidth</div>
           <select id="bandwidth">
@@ -21,7 +21,7 @@
             <option value="192">Low Bandwidth (192kbps)</option></select
           ><br />
 
-          <button @click="doCall()">Join Now</button>
+          <button @click="doCall(room)">Join Now</button>
         </div>
       </div>
     </div>
@@ -90,6 +90,9 @@ export default {
       query: "",
       search: "",
       hobbyTableData: [],
+      room : '',
+      password : '',
+      name:'',
       configuration: {
         video: {
           height: {
@@ -106,6 +109,7 @@ export default {
         : null,
     };
   },
+  
   computed: {
     sliceList() {
       return function (data, count) {
@@ -125,8 +129,13 @@ export default {
     },
   },
   created() {
-    this.load();
-    console.log(this.profile);
+    // this.load();
+    // console.log(this.profile);
+    this.room = this.$route.query.room;
+    // this.password = this.$route.params.password;
+    this.name = JSON.parse(localStorage.getItem("profile")).username;
+    console.log(this.name);
+    console.log(this.room);
     // test();
   },
   mounted() {
@@ -134,8 +143,8 @@ export default {
     
   },
   methods: {
-    doCall() {
-      doCall();
+    doCall(room) {
+      doCall(room);
     },
     closeChat() {
       closeChat();
@@ -147,6 +156,7 @@ export default {
       muteToggle();
     },
     endCall() {
+      // 预留 加自己方法
       endCall();
     },
     showChat() {

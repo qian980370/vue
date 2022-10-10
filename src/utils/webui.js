@@ -7,7 +7,7 @@ var audio_devices;
 
 var selectedCamera = 0;
 
-export function doCall() {
+export function doCall(room) {
   var conference_settings_background = document.getElementById(
     'conference_settings_background'
   );
@@ -15,7 +15,7 @@ export function doCall() {
 
   var videoElement = document.getElementById('video');
   var name = document.getElementById('your_name').value;
-  var alias = "VMR1";
+  var alias = room;
   var bandwidth = document.getElementById('bandwidth');
 
   bandwidth = bandwidth[bandwidth.selectedIndex].value;
