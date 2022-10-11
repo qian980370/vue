@@ -89,7 +89,7 @@
     center
   >
     <span class="dialog-footer">
-      <el-button @click="centerDialogVisible1 = false">Cancel</el-button>
+      <el-button @click="chatClose">Cancel</el-button>
     </span>
   </el-dialog>
   <el-dialog
@@ -110,7 +110,7 @@
   >
     <span class="dialog-footer">
       <el-button @click="chatAccept">Accept</el-button>
-      <el-button @click="centerDialogVisible3 = false">Reject</el-button>
+      <el-button @click="chatClose">Reject</el-button>
     </span>
   </el-dialog>
 </template>
@@ -141,9 +141,7 @@ export default {
         ? JSON.parse(localStorage.getItem("profile"))
         : null,
       selectedFriendId: null,
-      profile: localStorage.getItem("profile")
-        ? JSON.parse(localStorage.getItem("profile"))
-        : null,
+
       user: localStorage.getItem("user")
         ? JSON.parse(localStorage.getItem("user"))
         : null,
@@ -160,15 +158,16 @@ export default {
     this.username = this.profile.username;
     this.initialWebSocket();
     this.releaseConferenceRoom();
+    this.resetOncall()
     
   },
   watch: {
-    // $route(to, from) {
-    //   this.websocket.close();
-    //   if (this.oncall) {
-    //     this.chatClose();
-    //   }
-    // },
+    $route(to, from) {
+      this.websocket.close();
+      if (this.oncall) {
+        this.chatClose();
+      }
+    },
   },
   destroyed() {
     this.websocket.close();
@@ -286,6 +285,7 @@ export default {
       this.websocket.onopen = this.websocketOnOpen;
       this.websocket.onerror = this.websocketOnError;
       this.websocket.onclose = this.websocketClose;
+
     },
     websocketOnOpen() {},
     chatAccept() {
@@ -302,6 +302,7 @@ export default {
       this.$router.push({
         path: "/videocall",
         query: {
+          roomId: this.roomId,
           room: this.room,
           password: this.password,
         },
@@ -323,8 +324,9 @@ export default {
       this.oncall = false;
       this.roomId = null;
       this.message = null;
-      this.dialogChatVisible1 = false;
-      this.dialogChatVisible2 = false;
+      this.centerDialogVisible1 = false;
+      this.centerDialogVisible2 = false;
+      this.centerDialogVisible3 = false;
     },
     websocketOnError() {
       // 连接建立失败重连
@@ -379,21 +381,24 @@ export default {
             this.$router.push({
               path: "/videocall",
               query: {
+                roomId: this.roomId,
                 room: this.room,
                 password: this.password,
               },
             });
+
           } else {
             this.$message({
               type: "error",
               message: "your friend closed your call",
             });
-
+            this.releaseConferenceRoom();
             this.state = "no call";
             this.oncall = false;
             this.roomId = null;
-            this.dialogChatVisible1 = false;
-            this.dialogChatVisible2 = false;
+            this.centerDialogVisible1 = false;
+            this.centerDialogVisible2 = false;
+            this.centerDialogVisible3 = false;
           }
         }
       }
@@ -405,6 +410,32 @@ export default {
     websocketClose(e) {
       console.log("close connection", e);
     },
+
+    resetOncall(){
+      let friendRequestForm;
+      friendRequestForm = {};
+
+      friendRequestForm.profileID = this.profile.id;
+      friendRequestForm.targetID = 0;
+      request.put("/profile/oncall", friendRequestForm).then(res => {
+        if (res.code === '200') {
+          this.$message({
+            type: "success",
+            message: "successfully reset Oncall"
+          })
+
+          localStorage.setItem("profile", JSON.stringify(res.data));
+          this.refreshProfile()
+
+        } else {
+          this.$message({
+            type: "error",
+            message: res.msg
+          })
+        }
+      })
+    },
+
 
     callFriend(id) {
       //console.log(id)

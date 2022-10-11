@@ -86,6 +86,12 @@ export default {
   name: "InterestListRemove",
   data() {
     return {
+      websocket: null,
+      // webSocketURL: "ws://ericbackend.azurewebsites.net/chat",
+      webSocketURL: "ws://localhost:9090/chat/",
+      oncall: false,
+      roomId: null,
+
       form: {},
       query: "",
       search: "",
@@ -107,6 +113,7 @@ export default {
       profile: localStorage.getItem("profile")
         ? JSON.parse(localStorage.getItem("profile"))
         : null,
+      user : localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
     };
   },
   
@@ -129,7 +136,10 @@ export default {
     },
   },
   created() {
-    // this.load();
+    this.load();
+    this.setOncall();
+
+    this.roomId = this.$route.query.roomId;
     // console.log(this.profile);
     this.room = this.$route.query.room;
     // this.password = this.$route.params.password;
@@ -138,11 +148,150 @@ export default {
     console.log(this.room);
     // test();
   },
+
+  destroyed() {
+    this.websocket.close();
+    if (this.oncall){
+      console.log("des")
+      this.chatClose()
+    }
+  },
+
   mounted() {
     getMediaDevices(this.configuration)
     
   },
   methods: {
+    //websocket
+    chatClose(){
+
+      // call form is used to build websocket request
+      let callForm = {};
+      // sender is current user's profile id
+      callForm.sender = this.profile.id
+      // receiver is used to save the chat room id
+      callForm.receiver = this.roomId
+      // message = 2 is means this is a call disacceptance websocket request
+      callForm.message = "2"
+      this.releaseConferenceRoom();
+      this.websocketSend(JSON.stringify(callForm))
+      this.state = 'no call';
+      this.oncall = false;
+      this.roomId = null;
+      this.message = null;
+      this.dialogChatVisible1 = false;
+      this.dialogChatVisible2 = false;
+    },
+
+    initialWebSocket() {
+      this.webSocketURL =
+          // "ws://ericbackend.azurewebsites.net/chat/" +
+          "ws://localhost:9090/chat/" + this.user.token + "/" + this.profile.id;
+      if (typeof WebSocket === "undefined") {
+        return console.log("your browser is not support websocket");
+      }
+      console.log(this.webSocketURL);
+      this.websocket = new WebSocket(this.webSocketURL);
+      this.websocket.onmessage = this.websocketOnMessage;
+      this.websocket.onopen = this.websocketOnOpen;
+      this.websocket.onerror = this.websocketOnError;
+      this.websocket.onclose = this.websocketClose;
+
+    },
+
+    websocketOnOpen() {
+    },
+
+    websocketOnError() {
+      // 连接建立失败重连
+      this.initialWebSocket()
+    },
+    websocketOnMessage(e) {
+      // receive websocket reply or broadcast message
+      let res = JSON.parse(e.data)
+      console.log('receive: ', res)
+      if (res.isSystem){ //friend online offline notifications; broadcast message
+      }else {
+        if (res.isGetRoomID){ // room build, receive chat room id; Be attention Chat room is different with pxiep conference node room
+
+        }else { //accept or refuse call feedback message
+          if(res.message == 1){ //accept
+
+          }else { //refuse
+            this.$router.push({
+              path: "/taponfriend",
+              query: {
+              },
+            });
+          }
+        }
+      }
+    },
+    websocketSend(Data) {
+
+      this.websocket.send(Data)
+    },
+    websocketClose(e) {
+
+      console.log('close connection', e)
+    },
+
+    //set oncall state to be 1
+    setOncall(){
+      let friendRequestForm;
+      friendRequestForm = {};
+
+      friendRequestForm.profileID = this.profile.id;
+      friendRequestForm.targetID = 1;
+      request.put("/profile/oncall", friendRequestForm).then(res => {
+        if (res.code === '200') {
+          this.$message({
+            type: "success",
+            message: "successfully reset Oncall"
+          })
+          this.initialWebSocket();
+
+          localStorage.setItem("profile", JSON.stringify(res.data));
+          this.refreshProfile()
+
+        } else {
+          this.$message({
+            type: "error",
+            message: res.msg
+          })
+        }
+      })
+    },
+
+    // get conference room
+    releaseConferenceRoom(){
+      let releaseRoomRequestForm;
+      releaseRoomRequestForm = {};
+
+      releaseRoomRequestForm.profileID = this.profile.id;
+      releaseRoomRequestForm.targetID = null;
+      request.post("/conference/releaseRoom", releaseRoomRequestForm).then(res =>{
+        // console.log(res);
+        if (res.code === '200') {
+          this.conferenceRoom = null;
+          this.conference = null;
+          this.pin = null;
+          this.$message({
+            type: "success",
+            message: "successfully release a room"
+          })
+
+        } else {
+          this.$message({
+            type: "error",
+            message: res.msg
+          })
+        }
+      })
+    },
+
+
+
     doCall(room) {
       doCall(room);
     },
@@ -158,6 +307,14 @@ export default {
     endCall() {
       // 预留 加自己方法
       endCall();
+      this.chatClose();
+      this.websocket.close();
+
+      this.$router.push({
+        path: "/taponfriend",
+        query: {
+        },
+      });
     },
     showChat() {
       showChat();
@@ -169,37 +326,9 @@ export default {
       this.profile = localStorage.getItem("profile")
         ? JSON.parse(localStorage.getItem("profile"))
         : {};
-      // console.log(this.profile);
-      this.privacy = this.profile.privacy;
     },
     load() {
       this.refreshProfile();
-      this.getAllHobbies();
-      this.getRandomHobbies();
-    },
-    getAllHobbies() {
-      request
-        .get("/hobby/hobbyList", {
-          params: {
-            profileID: this.profile.id,
-          },
-        })
-        .then((res) => {
-          console.log(res);
-          this.hobbyTableData = res.data;
-        });
-    },
-    getRandomHobbies() {
-      request
-        .get("/hobby/randomHobbies", {
-          params: {
-            profileID: this.profile.id,
-          },
-        })
-        .then((res) => {
-          console.log(res);
-          this.randomHobbyTableData = res.data;
-        });
     },
   },
   components: { WisdomHeader },
