@@ -87,8 +87,8 @@ export default {
   data() {
     return {
       websocket: null,
-      // webSocketURL: "ws://ericbackend.azurewebsites.net/chat",
-      webSocketURL: "ws://localhost:9090/chat/",
+      webSocketURL: "ws://ericbackend.azurewebsites.net/chat",
+      // webSocketURL: "ws://localhost:9090/chat/",
       oncall: false,
       roomId: null,
 
@@ -185,8 +185,8 @@ export default {
 
     initialWebSocket() {
       this.webSocketURL =
-          // "ws://ericbackend.azurewebsites.net/chat/" +
-          "ws://localhost:9090/chat/" + this.user.token + "/" + this.profile.id;
+          "ws://ericbackend.azurewebsites.net/chat/" + this.user.token + "/" + this.profile.id;
+          // "ws://localhost:9090/chat/" + this.user.token + "/" + this.profile.id;
       if (typeof WebSocket === "undefined") {
         return console.log("your browser is not support websocket");
       }

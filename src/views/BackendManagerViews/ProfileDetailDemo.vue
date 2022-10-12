@@ -371,8 +371,8 @@ export default {
       conference: null,
       pin: null,
       websocket: null,
-      //webSocketURL: 'ws://ericbackend.azurewebsites.net/chat/',
-      webSocketURL: 'ws://localhost:9090/chat/',
+      webSocketURL: 'ws://ericbackend.azurewebsites.net/chat/',
+      // webSocketURL: 'ws://localhost:9090/chat/',
       oncall: false,
       roomId: null,
       dialogChatVisible1: false,
@@ -450,8 +450,8 @@ export default {
     //initial websocket state
     initialWebSocket(){
       //send token and profile id to backend, please follow the below format
-      // this.webSocketURL = 'ws://ericbackend.azurewebsites.net/chat/' + this.user.token + '/' + this.profile.id
-      this.webSocketURL = 'ws://localhost:9090/chat/' + this.user.token + '/' + this.profile.id
+      this.webSocketURL = 'ws://ericbackend.azurewebsites.net/chat/' + this.user.token + '/' + this.profile.id
+      // this.webSocketURL = 'ws://localhost:9090/chat/' + this.user.token + '/' + this.profile.id
       // check the supporting of your browser
       if(typeof WebSocket === 'undefined'){
         return console.log('your browser is not support websocket')
