@@ -2,7 +2,7 @@
   <Wisdom-header></Wisdom-header>
 
 
-  
+
 
   <div class="more_interests_container">
     <div class="more_interests_form">
@@ -24,8 +24,8 @@
             <tr v-for="(row,index) in sliceList(randomHobbyTableData,3)" :key="index">
               <td v-for="(data,i) in row " :key="i">
                 <div class="interests_display_content_img">
-                  <img :src="data.icon">
-                  <button id="delete_interest_btn" @click="addHobby(data.id)"></button>
+                  <img :src="src/image/add_icon.png">
+                  <button id="more_interest_btn"  @click="addHobby(data.id)"></button>
                 </div>
                 <p>{{data.name}}</p>
               </td>
@@ -91,18 +91,7 @@ export default {
         },
         load() {
             this.refreshProfile();
-            this.getAllHobbies();
             this.getRandomHobbies();
-        },
-        getAllHobbies() {
-            request.get("/hobby/hobbyList", {
-                params: {
-                    profileID: this.profile.id,
-                }
-            }).then(res => {
-                console.log(res);
-                this.hobbyTableData = res.data;
-            });
         },
         getRandomHobbies() {
             request.get("/hobby/randomHobbies", {
@@ -155,6 +144,16 @@ export default {
   /* background-color: #f3e6f7; */
   /* padding: 50px; */
   /* background-color: azure; */
+}
+#more_interest_btn{
+  position: relative;
+  height: 30px;
+  width: 30px;
+  z-index: 20;
+  left: 96px;
+  background: url("../image/add_icon.png") no-repeat;
+  background-size: 28px 28px;
+  border: none;
 }
 
 .more_interests_form{

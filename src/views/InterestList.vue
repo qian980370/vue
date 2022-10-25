@@ -128,7 +128,6 @@ export default {
     load() {
       this.refreshProfile();
       this.getAllHobbies();
-      this.getRandomHobbies();
     },
     getAllHobbies() {
       request
@@ -142,18 +141,7 @@ export default {
           this.hobbyTableData = res.data;
         });
     },
-    getRandomHobbies() {
-      request
-        .get("/hobby/randomHobbies", {
-          params: {
-            profileID: this.profile.id,
-          },
-        })
-        .then((res) => {
-          console.log(res);
-          this.randomHobbyTableData = res.data;
-        });
-    },
+
   },
 };
 </script>
