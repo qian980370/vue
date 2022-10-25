@@ -43,7 +43,7 @@ export function doCall(room) {
 
   //pexipdemo.com
   //20.211.33.131
-  pexRTC.makeCall('pexipdemo.com', alias, name, bandwidth);
+  pexRTC.makeCall('ask.wisdom-connect.com', alias, name, bandwidth);
 }
 
 /* Call Transfer Example */
