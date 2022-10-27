@@ -40,10 +40,6 @@
                 <td v-for="(data, i) in row" :key="i">
                   <div class="interests_display_content_img">
                     <img :src="data.icon" />
-                    <button
-                      id="delete_interest_btn"
-                      @click="deleteHobby(data.id)"
-                    ></button>
                   </div>
                   <p>{{ data.name }}</p>
                 </td>

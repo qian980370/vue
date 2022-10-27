@@ -1,47 +1,55 @@
 <template>
-  <Wisdom-header></Wisdom-header>
+  <div style="width: 100%; height: 120vh;  overflow: hidden">
+
+    <div class="logo_and_title">
+      <table>
+        <tr>
+          <td><img  src="../image/logo.png" alt="logo"></td>
+          <td><h1>Wisdom Connect</h1></td>
+        </tr>
+      </table>
+    </div>
 
 
+    <div class="interests_container">
+      <div class="interests_form">
 
-
-  <div class="more_interests_container">
-    <div class="more_interests_form">
-      <div class="more_interests_form_header">
-        <table class="interests_form_header_table">
-          <tr>
-            <td><div class="back_button" @click="$router.push('/interestlist')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
-            <td><p>Add Interests</p></td>
-          </tr>
-        </table>
-      </div>
-
-      <hr>
-
-      <div class="more_interests_display_header"><p>Click to add in your list</p></div>
-      <div class="interests_display_container">
-        <div class="interests_display_content">
-          <table>
-            <tr v-for="(row,index) in sliceList(randomHobbyTableData,3)" :key="index">
-              <td v-for="(data,i) in row " :key="i">
-                <div class="interests_display_content_img">
-                  <img :src="src/image/add_icon.png">
-                  <button id="more_interest_btn"  @click="addHobby(data.id)"></button>
-                </div>
-                <p>{{data.name}}</p>
-              </td>
+        <div class="interests_form_header">
+          <table class="interests_form_header_table">
+            <tr>
+              <td><div class="back_button" @click="$router.push('/personal')"><img src="../image/back_icon.png" style="height: 30px;" alt="back_icon"></div></td>
+              <td><p>Your Interest List</p></td>
             </tr>
           </table>
         </div>
 
+        <hr>
 
+
+        <div class="interests_display_header"><p>Click to add in your list</p></div>
+        <div class="interests_display_container">
+          <div class="interests_display_content">
+            <table>
+              <tr v-for="(row,index) in sliceList(randomHobbyTableData,3)" :key="index">
+                <td v-for="(data,i) in row " :key="i">
+                  <div class="interests_display_content_img">
+                    <img :src="data.icon">
+                    <button id="delete_interest_btn"  @click="addHobby(data.id)"></button>
+                  </div>
+                  <p>{{data.name}}</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
 
 
 
     </div>
 
-
-    </div>
   </div>
+
 
 
 </template>
@@ -51,93 +59,101 @@ import request from "@/utils/request";
 import WisdomHeader from "@/components/WisdomHeader.vue";
 
 export default {
-    name: "MoreInterest",
-    data() {
-        return {
-            form: {},
-            query: "",
-            search: "",
-            randomHobbyTableData: [],
-            profile: localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
-        };
-    },
-    computed: {
-        sliceList() {
-            return function (data, count) {
-                if (data != undefined) {
-                    let index = 0;
-                    let arrTemp = [];
-                    for (let i = 0; i < data.length; i++) {
-                        index = parseInt(i / count);
-                        if (arrTemp.length <= index) {
-                            arrTemp.push([]);
-                        }
-                        arrTemp[index].push(data[i]);
-                    }
-                    return arrTemp;
-                }
-            };
+  name: "MoreInterest",
+  data() {
+    return {
+      form: {},
+      query: "",
+      search: "",
+      randomHobbyTableData: [],
+      profile: localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : null,
+    };
+  },
+  computed: {
+    sliceList() {
+      return function (data, count) {
+        if (data != undefined) {
+          let index = 0;
+          let arrTemp = [];
+          for (let i = 0; i < data.length; i++) {
+            index = parseInt(i / count);
+            if (arrTemp.length <= index) {
+              arrTemp.push([]);
+            }
+            arrTemp[index].push(data[i]);
+          }
+          return arrTemp;
         }
+      };
+    }
+  },
+  created() {
+    this.load();
+    console.log(this.profile);
+  },
+  methods: {
+    refreshProfile() {
+      this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {};
+      // console.log(this.profile);
+      this.privacy = this.profile.privacy;
     },
-    created() {
-        this.load();
-        console.log(this.profile);
+    load() {
+      this.refreshProfile();
+      this.getRandomHobbies();
     },
-    methods: {
-        refreshProfile() {
-            this.profile = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : {};
-            // console.log(this.profile);
-            this.privacy = this.profile.privacy;
-        },
-        load() {
-            this.refreshProfile();
-            this.getRandomHobbies();
-        },
-        getRandomHobbies() {
-            request.get("/hobby/randomHobbies", {
-                params: {
-                    profileID: this.profile.id,
-                }
-            }).then(res => {
-                console.log(res);
-                this.randomHobbyTableData = res.data;
-            });
-        },
-        addHobby(id) {
-            let friendRequestForm;
-            friendRequestForm = {};
-            friendRequestForm.profileID = this.profile.id;
-            friendRequestForm.targetID = id;
-            request.post("/hobby/addHobby", friendRequestForm).then(res => {
-                if (res.code === "200") {
-                    this.$message({
-                        type: "success",
-                        message: "successfully add hobby"
-                    });
-                    this.load();
-                }
-                else {
-                    this.$message({
-                        type: "error",
-                        message: res.msg
-                    });
-                }
-            });
-        },
+    getRandomHobbies() {
+      request.get("/hobby/randomHobbies", {
+        params: {
+          profileID: this.profile.id,
+        }
+      }).then(res => {
+        console.log(res);
+        this.randomHobbyTableData = res.data;
+      });
     },
-    components: { WisdomHeader }
+    addHobby(id) {
+      let friendRequestForm;
+      friendRequestForm = {};
+      friendRequestForm.profileID = this.profile.id;
+      friendRequestForm.targetID = id;
+      request.post("/hobby/addHobby", friendRequestForm).then(res => {
+        if (res.code === "200") {
+          this.$message({
+            type: "success",
+            message: "successfully add hobby"
+          });
+          this.load();
+        }
+        else {
+          this.$message({
+            type: "error",
+            message: res.msg
+          });
+        }
+      });
+    },
+  },
+  components: { WisdomHeader }
 }
 </script>
 
 <style scoped>
-#logo_and_title{
+.logo_and_title{
   width: 400px;
   height: 120px;
   text-align: center;
   padding-left: 37%;
   padding-top: 2%;
 }
-.more_interests_container{
+.logo_and_title img{
+  width: 80px;
+}
+.logo_and_title h1{
+  width: 300px;
+}
+/*--------------Interests-----------------*/
+
+.interests_container{
   /* background: url('jack-finnigan-M9EctVUPrp4-unsplash.jpg') no-repeat center center fixed; */
 
   height: 1000px;
@@ -145,20 +161,10 @@ export default {
   /* padding: 50px; */
   /* background-color: azure; */
 }
-#more_interest_btn{
-  position: relative;
-  height: 30px;
-  width: 30px;
-  z-index: 20;
-  left: 96px;
-  background: url("../image/add_icon.png") no-repeat;
-  background-size: 28px 28px;
-  border: none;
-}
 
-.more_interests_form{
+.interests_form{
   width: 540px;
-  height: 800px;
+  height: 840px;
   /* border: 2px solid red; */
   margin:20px auto;
   text-align: center;
@@ -166,10 +172,9 @@ export default {
   border-color:#864a98;
   border-radius: 5px;
 }
-.more_interests_form_header{
-  padding: 2rem 0;
-}
-.more_interests_form_header p{
+
+.interests_form_header p{
+  width: 370px;
   font-size: 28px;
   font-weight: bold;
   color:#864a98;
@@ -177,20 +182,15 @@ export default {
 }
 .interests_display_header{
   margin-top: 30px;
-
 }
-
-.more_interests_display_header{
-  margin-top: 20px;
-}
-.more_interests_display_header p{
-  font-size: 25px;
+.interests_display_header p{
+  font-size: 18px;
   font-weight: bold;
   color:#864a98;
   text-align: center;
 }
 
-.more_interests_display_container{
+.interests_display_container{
   width: 440px;
   overflow-y:auto;
   overflow-x: hidden;
@@ -201,17 +201,17 @@ export default {
   margin-top: 40px;
 }
 
-.more_interests_display_container::-webkit-scrollbar{
+.interests_display_container::-webkit-scrollbar{
   width: 10px;
 }
-.more_interests_display_container::-webkit-scrollbar-thumb{
+.interests_display_container::-webkit-scrollbar-thumb{
   background-color: #bfa0c8;
   border-radius: 5px;
 }
-.more_interests_display_container::-webkit-scrollbar-button{
+.interests_display_container::-webkit-scrollbar-button{
   display: none;
 }
-.more_interests_display_container::-webkit-scrollbar-track{
+.interests_display_container::-webkit-scrollbar-track{
   background-color: #f3f3f3;
 }
 
@@ -233,21 +233,22 @@ export default {
   margin-bottom: 10px;
   margin-left: 15px;
 }
-.more_interests_display_content img{
+.interests_display_content img{
   width: 100px;
   height: 100px;
   cursor: pointer;
   z-index: 0;
 }
-.interests_display_content img{
-  width: 100px;
-  height: 100px;
-  cursor: pointer;
-}
 
 .interests_display_content td{
   width: 240px;
-  height: 160px;
+  height: 150px;
+  border:solid 2px white;
+}
+.interests_display_content td:hover{
+  width: 240px;
+  height: 150px;
+  border:solid 2px #bfa0c8;
 }
 .interests_display_content tr{
   padding-top: 40px;
@@ -259,24 +260,26 @@ export default {
   font-weight: bold;
   text-align: center;
 }
-
-.more_interests_buttons{
+.interests_buttons{
   margin-left: 50px;
 }
 
-.more_interests_display_content_img{
+.interests_display_content_img{
   position: relative;
 }
 
-#add_interest_btn{
+#delete_interest_btn{
   position: absolute;
   height: 30px;
-  width: auto;
+  width: 30px;
+  z-index: 20;
   left: 96px;
+  background: url("../image/add_icon.png") no-repeat;
+  background-size: 28px 28px;
+  border: none;
 }
 
-
-#more_interests_add_btn{
+#remove_btn{
   height: 44px;
   width: 215px;
   background-color: #bfa0c8;
@@ -286,27 +289,27 @@ export default {
   font-size: 18px;
   border-radius: 5px;
 }
-#more_interests_add_btn:hover{
+#remove_btn:hover{
   height: 44px;
   width: 215px;
-  background-color: white;
-  color: #bfa0c8;
+  background-color:white;
+  color:  #bfa0c8;
   border: solid 2px #bfa0c8;
   margin-top: 70px;
   font-size: 18px;
   border-radius: 5px;
 }
-#more_interests_add_btn:active{
+#remove_btn:active{
   height: 44px;
   width: 215px;
-  background-color: white;
-  color: #bfa0c8;
+  background-color:white;
+  color:  #bfa0c8;
   border: solid 2px #bfa0c8;
   margin-top: 70px;
   font-size: 18px;
   border-radius: 5px;
 }
-#more_interests_refresh_btn{
+#more_btn{
   height: 44px;
   width: 215px;
   background-color: #bfa0c8;
@@ -316,23 +319,23 @@ export default {
   font-size: 18px;
   border-radius: 5px;
 }
-#more_interests_refresh_btn:hover{
+#more_btn:hover{
   height: 44px;
   width: 215px;
-  background-color: white;
-  color: #bfa0c8;
+  background-color:white;
+  color:  #bfa0c8;
   border: solid 2px #bfa0c8;
   margin-top: 70px;
   font-size: 18px;
   border-radius: 5px;
 }
-#more_interests_refresh_btn:active{
+#more_btn:active{
   height: 44px;
   width: 215px;
-  background-color: white;
-  color: #bfa0c8;
+  background-color:white;
+  color:  #bfa0c8;
   border: solid 2px #bfa0c8;
-  margin-top: 200px;
+  margin-top: 70px;
   font-size: 18px;
   border-radius: 5px;
 }
@@ -340,4 +343,9 @@ export default {
   width: 80px;
   cursor: pointer;
 }
+.interests_form_header{
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
 </style>
